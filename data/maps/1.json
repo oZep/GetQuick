@@ -1,0 +1,1 @@
+{"tilemap": {"5;5": {"type": "spawners", "variant": 1, "pos": [5, 5]}, "14;5": {"type": "spawners", "variant": 1, "pos": [14, 5]}, "9;10": {"type": "spawners", "variant": 1, "pos": [9, 10]}}, "tile_size": 16, "offgrid": []}
