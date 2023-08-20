@@ -162,8 +162,8 @@ class Game:
                     pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
                     self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
 
-            self.clouds.update() # updates clouds before the rest of the tiles
-            self.clouds.render(self.display_2, offset=render_scroll)
+            # ssself.clouds.update() # updates clouds before the rest of the tiles
+            # self.clouds.render(self.display_2, offset=render_scroll)
 
             self.tilemap.render(self.display, offset=render_scroll)
 
@@ -244,7 +244,7 @@ class Game:
                         self.movement[2] = True
                     if event.key == pygame.K_s:
                         self.movement[3] = True
-                    if event.key == pygame.K_x:
+                    if event.key == pygame.K_k:
                         self.player.dash()
                 if event.type == pygame.KEYUP: # when key is released
                     if event.key == pygame.K_a: 

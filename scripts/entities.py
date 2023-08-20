@@ -5,6 +5,8 @@ import random
 from scripts.particle import Particle
 from scripts.spark import Spark
 
+RENDER_SCALE = 2.0
+
 class PhysicsEntity:
     def __init__(self, game, e_type, pos, size):
         '''
@@ -129,9 +131,14 @@ class Player(PhysicsEntity):
 
         # Will have to change to go in the direction of the mouse
         if abs(self.dashing) > 50:
-            self.velocity[0] = abs(self.dashing) / self.dashing * 8 #dash/dash gives direction which is applied to speed
+            mpos = pygame.mouse.get_pos() # gets mouse positon
+            mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE) # since screen scales x2
+            dash_pos = (int(mpos[0]), int(mpos[1]))
+            self.velocity[0] = abs(dash_pos[1]) / dash_pos[0] * 8 #dash/dash gives direction which is applied to speed
+            self.velocity[1] = abs(dash_pos[1]) / dash_pos[1] * 8 #dash/dash gives direction which is applied to speed
             if abs(self.dashing) == 51: # slow down dash after 10 frames
                 self.velocity[0] *= 0.1
+                self.velocity[1] *= 0.1  # goes to 0, but never allows player to move downward?
             # trail of particles in the middle of dash
             pvelocity = [abs(self.dashing)/self.dashing * random.random() * 3, 0] # particles move in the direction of the dash
             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
@@ -165,24 +172,24 @@ class Enemy(PhysicsEntity):
         '''
         super().__init__(game, 'enemy', pos, size)
         self.walking = 0
+        self.speed = 1 # enemy speed
     
     def update(self, tilemap, movement=(0,0)):
         if self.walking:
-            movement = (movement[0] - 0.5 if self.flip else 0.5, movement[1]) # y axis movement remains the same
+            movement = (movement[0] - self.speed if (self.game.player.pos[0]/abs(self.game.player.pos[0]) < 0) else self.speed, movement[1] - self.speed if (self.game.player.pos[1]/abs(self.game.player.pos[1]) < 0)  else self.speed) # y axis movement remains the same
             self.walking = max(0, self.walking - 1) # we will get one frame where it goes to zero, where the value of self.walking = false
-            if not self.walking:
-                # calc distance btwn enemy and player
-                dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-                if (abs(dis[1])) < 16: # y axis less then 16 pixels
-                    if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
-                        self.game.sfx['shoot'].play()
-                        self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
-                        for i in range(4):
-                            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
-                    if (not self.flip and dis[0] > 0):
-                        self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
-                        for i in range(4):
-                            self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
+             # calc distance btwn enemy and player
+            dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+            if (abs(dis[1])) < 16: # y axis less then 16 pixels
+                if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
+                    self.game.sfx['shoot'].play()
+                    self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
+                    for i in range(4):
+                        self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
+                if (not self.flip and dis[0] > 0):
+                    self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
+                    for i in range(4):
+                        self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
 
         elif random.random() < 0.01: # 1 in every 6.1 seconds
             self.walking = random.randint(30, 120)
