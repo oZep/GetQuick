@@ -177,7 +177,12 @@ class Enemy(PhysicsEntity):
     
     def update(self, tilemap, movement=(0,0)):
         if self.walking:
-            movement = (movement[0] - self.speed if (self.game.player.pos[0] < 0) else self.speed, movement[1] - self.speed if (self.game.player.pos[1] > 0)  else self.speed) # y axis movement remains the same
+            # Using the distance formula
+            dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+            # velocity=[math.cos(angle +math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5]
+            angle = 1/math.tan(dis[1]/dis[0]) # in radians
+            #(cos(angle) * speed, sin(angle) * speed)?
+            movement = (movement[0] - (math.cos(angle) * self.speed) if (self.game.player.pos[0] < 0) else (math.cos(angle) * self.speed), movement[1] - (math.sin(angle) * self.speed) if (self.game.player.pos[1] > 0)  else (math.sin(angle) * self.speed)) # y axis movement remains the same
             dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             if (abs(dis[1]) and abs(dis[0]) < 10):
                 self.walking = False
