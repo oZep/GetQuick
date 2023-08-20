@@ -66,14 +66,14 @@ class Game:
         #self.clouds = Clouds(self.assets['clouds'], count=16)
 
         # initalizing player
-        self.player = Player(self, (self.display.get_width(), self.display.get_height()), (8, 15))
+        self.player = Player(self, (self.display.get_width()/2, self.display.get_height()/2), (8, 15))
 
         # initalizing tilemap
         self.tilemap = Tilemap(self, tile_size=16)
 
         # tracking level
         self.level = 0
-        self.max_level = len(os.listdir('data/maps')) # max level
+        self.max_level = len(os.listdir('data/maps')) # max level,
         # loading the level
         self.load_level(2)  # self.load_level(self.level), hard coding to 1 atm
 
@@ -136,7 +136,7 @@ class Game:
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level, self.max_level) # increase level
-                    self.load_level(self.level) # -1 since we start at level 0, --> self.load_level(self.level) hard coding to 1
+                    self.load_level(2) # -1 since we start at level 0, --> self.load_level(self.level) hard coding to 1
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 

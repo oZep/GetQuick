@@ -186,7 +186,7 @@ class Enemy(PhysicsEntity):
             # Using the distance formula
             dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             distance = dis.length()
-            if distance > 10:
+            if distance > 20:
                 angle = math.atan2(dis.y, dis.x)
                 movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
                 self.walking = True
@@ -194,16 +194,18 @@ class Enemy(PhysicsEntity):
                 self.walking = False
             if not self.walking:
                 self.timer = max(0, self.timer - 1) # we will get one frame where it goes to zero, where the value of self.walking = false
+                # get angle 
+                angle = math.atan2(dis.y, dis.x)
                 if not self.timer: # if self.timer = 0
                     if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
-                        self.timer = 300  # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 150 # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         self.game.sfx['shoot'].play()
                         self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
                     if (not self.flip and dis[0] > 0):
                         self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
-                        self.timer = 300  # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 150  # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
         elif random.random() < 0.01: # 1 in every 6.1 seconds
