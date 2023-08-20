@@ -149,8 +149,8 @@ class Game:
 
             # move 'camera' to focus on player, make him the center of the screen
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
-            self.scroll[0] += (self.display.get_width()/2 - self.scroll[0])  / 30  # x axis
-            self.scroll[1] += (self.display.get_height()/2 - self.scroll[1]) / 30
+            self.scroll[0] = self.display.get_width()/2 / 30  # x axis
+            self.scroll[1] = self.display.get_height()/2/ 30
 
             # fix the jitter
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
