@@ -5,8 +5,6 @@ import random
 from scripts.particle import Particle
 from scripts.spark import Spark
 
-RENDER_SCALE = 2.0
-
 class PhysicsEntity:
     def __init__(self, game, e_type, pos, size):
         '''
@@ -131,14 +129,22 @@ class Player(PhysicsEntity):
 
         # Will have to change to go in the direction of the mouse
         if abs(self.dashing) > 50:
-            mpos = pygame.mouse.get_pos() # gets mouse positon
-            mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE) # since screen scales x2
-            dash_pos = (int(mpos[0]), int(mpos[1]))
-            self.velocity[0] = abs(dash_pos[1]) / dash_pos[0] * 8 #dash/dash gives direction which is applied to speed
-            self.velocity[1] = abs(dash_pos[1]) / dash_pos[1] * 8 #dash/dash gives direction which is applied to speed
+            # need where we want to dash towards
+            mpos = pygame.mouse.get_pos()
+            # direction vector between player and mouse
+            dir_vector = pygame.math.Vector2(mpos[0] - self.pos[0], mpos[1] - self.pos[1])
+            # distance between player and mouse
+            distance = dir_vector.length()
+            # Scale the velocity based on the wanted distance
+            desired_distance = 10  # Adjust this value later
+            if distance != 0:
+                scale_factor = desired_distance / distance
+                self.velocity[0] = dir_vector.x * scale_factor
+                self.velocity[1] = dir_vector.y * scale_factor
+                        
             if abs(self.dashing) == 51: # slow down dash after 10 frames
-                self.velocity[0] *= 0.1
-                self.velocity[1] *= 0.1  # goes to 0, but never allows player to move downward?
+                self.velocity[0] *= 0.001
+                self.velocity[1] *= 0.001  # goes to 0, but never allows player to move downward?
             # trail of particles in the middle of dash
             pvelocity = [abs(self.dashing)/self.dashing * random.random() * 3, 0] # particles move in the direction of the dash
             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
@@ -180,9 +186,8 @@ class Enemy(PhysicsEntity):
             # Using the distance formula
             dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             # velocity=[math.cos(angle +math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5]
-            angle = 1/math.tan(dis[1]/dis[0]) # in radians
-            #(cos(angle) * speed, sin(angle) * speed)?
-            movement = (movement[0] - (math.cos(angle) * self.speed) if (self.game.player.pos[0] < 0) else (math.cos(angle) * self.speed), movement[1] - (math.sin(angle) * self.speed) if (self.game.player.pos[1] > 0)  else (math.sin(angle) * self.speed)) # y axis movement remains the same
+            angle = math.tan(dis[1]/dis[0])
+            movement = (movement[0] - (angle * self.speed)if (self.game.player.pos[0] < 0) else (angle * self.speed), movement[1] - (angle * self.speed) if (self.game.player.pos[1] > 0)  else (angle * self.speed)) # y axis movement remains the same
             dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             if (abs(dis[1]) and abs(dis[0]) < 10):
                 self.walking = False
@@ -223,7 +228,7 @@ class Enemy(PhysicsEntity):
                     speed = random.random() * 5
                     self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random())) 
                     # on death particles
-                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle +math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
                 self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random())) # left
                 self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random())) # right
                 return True # [**]

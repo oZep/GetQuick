@@ -66,7 +66,7 @@ class Game:
         #self.clouds = Clouds(self.assets['clouds'], count=16)
 
         # initalizing player
-        self.player = Player(self, (100, 100), (8, 15))
+        self.player = Player(self, (self.display.get_width(), self.display.get_height()), (8, 15))
 
         # initalizing tilemap
         self.tilemap = Tilemap(self, tile_size=16)
@@ -75,7 +75,7 @@ class Game:
         self.level = 0
         self.max_level = len(os.listdir('data/maps')) # max level
         # loading the level
-        self.load_level(1)  # self.load_level(self.level), hard coding to 1 atm
+        self.load_level(2)  # self.load_level(self.level), hard coding to 1 atm
 
         # screen shake
         self.screenshake = 0
@@ -149,8 +149,8 @@ class Game:
 
             # move 'camera' to focus on player, make him the center of the screen
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width()/2 - self.scroll[0])  / 30  # x axis
-            self.scroll[1] += (self.player.rect().centery - self.display.get_height()/2 - self.scroll[1]) / 30
+            self.scroll[0] += (self.display.get_width()/2 - self.scroll[0])  / 30  # x axis
+            self.scroll[1] += (self.display.get_height()/2 - self.scroll[1]) / 30
 
             # fix the jitter
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
