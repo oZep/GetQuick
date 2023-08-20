@@ -173,27 +173,34 @@ class Enemy(PhysicsEntity):
         super().__init__(game, 'enemy', pos, size)
         self.walking = 0
         self.speed = 1 # enemy speed
+        self.timer = 0 # enemy shooting timer
     
     def update(self, tilemap, movement=(0,0)):
         if self.walking:
-            movement = (movement[0] - self.speed if (self.game.player.pos[0]/abs(self.game.player.pos[0]) < 0) else self.speed, movement[1] - self.speed if (self.game.player.pos[1]/abs(self.game.player.pos[1]) < 0)  else self.speed) # y axis movement remains the same
-            self.walking = max(0, self.walking - 1) # we will get one frame where it goes to zero, where the value of self.walking = false
-             # calc distance btwn enemy and player
+            movement = (movement[0] - self.speed if (self.game.player.pos[0] < 0) else self.speed, movement[1] - self.speed if (self.game.player.pos[1] > 0)  else self.speed) # y axis movement remains the same
             dis = (self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-            if (abs(dis[1])) < 16: # y axis less then 16 pixels
-                if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
-                    self.game.sfx['shoot'].play()
-                    self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
-                    for i in range(4):
-                        self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
-                if (not self.flip and dis[0] > 0):
-                    self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
-                    for i in range(4):
-                        self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
-
+            if (abs(dis[1]) and abs(dis[0]) < 10):
+                self.walking = False
+            else:
+                self.walking = True
+            if not self.walking:
+                self.timer = max(0, self.timer - 1) # we will get one frame where it goes to zero, where the value of self.walking = false
+                if not self.timer:
+                    if (abs(dis[1])) < 16: # y axis less then 16 pixels
+                        if not self.timer:
+                            if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
+                                self.game.sfx['shoot'].play()
+                                self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
+                            if (not self.flip and dis[0] > 0):
+                                self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
+                                for i in range(4):
+                                    self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
         elif random.random() < 0.01: # 1 in every 6.1 seconds
+            self.timer = random.randint(30, 120)
             self.walking = random.randint(30, 120)
-
+       
         super().update(tilemap, movement=movement)
 
         if movement[0] != 0:

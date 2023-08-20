@@ -38,7 +38,6 @@ class Game:
             'stone': load_images('tiles/stone'),
             'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
-            'clouds': load_images('clouds'),
             'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
@@ -64,7 +63,7 @@ class Game:
         self.sfx['hit'].set_volume(0.8)
         self.sfx['dash'].set_volume(0.3)
 
-        self.clouds = Clouds(self.assets['clouds'], count=16)
+        #self.clouds = Clouds(self.assets['clouds'], count=16)
 
         # initalizing player
         self.player = Player(self, (100, 100), (8, 15))
