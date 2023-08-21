@@ -149,10 +149,10 @@ class Game:
                 if self.dead > 40: # timer that starts when you die
                     self.load_level(self.level)
 
-            # move 'camera' to focus on player, make him the center of the screen
+
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
-            self.scroll[0] = self.display.get_width()/2 / 30  # x axis
-            self.scroll[1] = self.display.get_height()/2/ 30
+            self.scroll[0] = self.display.get_width()/2 / 30 + 2 # x axis
+            self.scroll[1] = self.display.get_height()/2/ 30 + 2
 
             # fix the jitter
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
@@ -261,9 +261,9 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
-            hp_1 = Heart(self.assets['heart'].copy(), [16, 15], 12)
-            hp_2 = Heart(self.assets['heart'].copy(), [34, 15], 12)
-            hp_3 = Heart(self.assets['heart'].copy(), [52, 15], 12)
+            hp_1 = Heart(self.assets['heart'].copy(), [13, 18], 15)
+            hp_2 = Heart(self.assets['heart'].copy(), [32, 18], 15)
+            hp_3 = Heart(self.assets['heart'].copy(), [52, 18], 15)
             if self.dead <= 0 and self.dead < 1:
                 hp_1.update()
                 hp_1.render(self.display)
