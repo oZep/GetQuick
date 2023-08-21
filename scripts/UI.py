@@ -5,7 +5,7 @@ class Heart:
     def __init__(self, img, pos, speed):
         '''
         initializing the heart
-        (image, position=(x,y), speed)
+        (image, position=[x,y], speed)
         '''
         self.img = img
         self.pos = pos
@@ -28,3 +28,25 @@ class Heart:
         renders img on screen
         '''
         surf.blit(self.img, self.pos)
+
+class Levelbar:
+    def __init__(self, level, pos=[0,0]):
+        '''
+        initializing the level counter
+        (current level, position=[x,y])
+        '''
+        self.level = level
+        self.pos = pos
+    
+    def update(self):
+        '''
+        updates level
+        '''
+
+    def render(self, surf):
+        '''
+        renders img on screen
+        '''
+        myfont = pygame.font.SysFont("monospace", 15)
+        current_level = myfont.render(str(self.level), 1, (255,255,0))
+        surf.blit(current_level, self.pos)

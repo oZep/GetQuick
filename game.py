@@ -10,7 +10,7 @@ from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
 from scripts.spark import Spark
-from scripts.heart import Heart
+from scripts.UI import Heart, Levelbar
 
 class Game:
     def __init__(self):
@@ -77,7 +77,7 @@ class Game:
         self.level = 0
         self.max_level = len(os.listdir('data/maps')) # max level,
         # loading the level
-        self.load_level(2)  # self.load_level(self.level), hard coding to 1 atm
+        self.load_level(0)  # self.load_level(self.level), hard coding to 1 atm
 
         # screen shake
         self.screenshake = 0
@@ -134,15 +134,15 @@ class Game:
             self.screenshake = max(0, self.screenshake-1) # resets screenshake value
 
             # level transiition
-            if self.dead >= 1: # if self.dead = 0
+            if not len(self.enemies): 
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
-                    self.level = min(self.level, self.max_level) # increase level
-                    self.load_level(2) # -1 since we start at level 0, --> self.load_level(self.level) hard coding to 1
+                    self.level = min(self.level + 1, self.max_level -1) # increase level
+                    self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
-            if self.dead >= 1: # get hit once
+            if self.dead >= 1: # get hit 3 times
                 self.dead += 1
                 if self.dead >= 10: # to make the level transitions smoother
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
@@ -262,8 +262,8 @@ class Game:
                         self.movement[3] = False
 
             hp_1 = Heart(self.assets['heart'].copy(), [13, 18], 15)
-            hp_2 = Heart(self.assets['heart'].copy(), [32, 18], 15)
-            hp_3 = Heart(self.assets['heart'].copy(), [52, 18], 15)
+            hp_2 = Heart(self.assets['heart'].copy(), [30, 18], 15)
+            hp_3 = Heart(self.assets['heart'].copy(), [47, 18], 15)
             if self.dead <= 0 and self.dead < 1:
                 hp_1.update()
                 hp_1.render(self.display)
@@ -273,6 +273,10 @@ class Game:
             if self.dead <= -2:
                 hp_3.update()
                 hp_3.render(self.display)
+
+            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 2, 12))
+            level_bar.update()
+            level_bar.render(self.display)
             
             # implementing transition
             if self.transition:
