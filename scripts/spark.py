@@ -1,4 +1,5 @@
 import math
+import random
 import pygame
 
 class Spark:
@@ -33,5 +34,4 @@ class Spark:
             (self.pos[0] + math.cos(self.angle - math.pi * 0.5) * self.speed * 0.5 - offset[0], self.pos[1] + math.sin(self.angle - math.pi * 0.5) * self.speed * 0.5 - offset[1])
 
         ]
-
         pygame.draw.polygon(surf, (255, 255, 255), render_points)
