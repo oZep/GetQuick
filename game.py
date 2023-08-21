@@ -26,7 +26,10 @@ class Game:
 
         self.display = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
 
+        self.display_3 = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
+
         self.display_2 = pygame.Surface((320, 240))
+
 
         self.clock = pygame.time.Clock()
         
@@ -128,6 +131,7 @@ class Game:
         # creating an infinite game loop
         while True:
             self.display.fill((0, 0, 0, 0))    # outlines
+            self.display_3.fill((0, 0, 0, 0))    # outlines
             # clear the screen for new image generation in loop
             self.display_2.blit(self.assets['background'], (0,0)) # no outline
 
@@ -178,7 +182,7 @@ class Game:
             if self.dead != 1:
                 # update player movement
                 self.player.update(self.tilemap, (self.movement[1] - self.movement[0], self.movement[3] - self.movement[2]))
-                self.player.render(self.display, offset=render_scroll)
+                self.player.render(self.display_3, offset=render_scroll)
 
             # render/spawn bullet projectiles
             # [[x, y], direction, timer]
@@ -216,26 +220,10 @@ class Game:
                 if kill:
                     self.sparks.remove(spark)
 
-            # ouline based on display
-            display_mask = pygame.mask.from_surface(self.display)
-            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
-            self.display_2.blit(display_sillhouette, (0, 0))
-            for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                self.display_2.blit(display_sillhouette, offset) # putting what we drew onframe back into display
-            
-
-            for particle in self.particles.copy():
-                kill = particle.update()
-                particle.render(self.display, offset=render_scroll)
-                if particle.type == 'leaf':
-                    particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3 # making the parlitcle move back and forth smooth'y
-                if kill:
-                    self.particles.remove(particle)
-
-                        
-            hp_1 = Heart(self.assets['heart'].copy(), [13, 18], 15)
-            hp_2 = Heart(self.assets['heart'].copy(), [30, 18], 15)
-            hp_3 = Heart(self.assets['heart'].copy(), [47, 18], 15)
+                                    
+            hp_1 = Heart(self.assets['heart'].copy(), [13, 19], 15)
+            hp_2 = Heart(self.assets['heart'].copy(), [30, 19], 15)
+            hp_3 = Heart(self.assets['heart'].copy(), [47, 19], 15)
             if self.dead <= 0 and self.dead < 1:
                 hp_1.update()
                 hp_1.render(self.display)
@@ -249,6 +237,31 @@ class Game:
             level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 12))
             level_bar.render(self.display)
             
+
+            # black ouline based on display
+            display_mask = pygame.mask.from_surface(self.display)
+            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
+            self.display_2.blit(display_sillhouette, (0, 0))
+            for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                self.display_2.blit(display_sillhouette, offset) # putting what we drew onframe back into display
+            
+
+            # white ouline based on display
+            display_mask = pygame.mask.from_surface(self.display_3)
+            display_sillhouette = display_mask.to_surface(setcolor=(225, 225, 225, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
+            self.display_2.blit(display_sillhouette, (0, 0))
+            for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                self.display_2.blit(display_sillhouette, offset) # putting what we drew onframe back into display
+            
+
+            for particle in self.particles.copy():
+                kill = particle.update()
+                particle.render(self.display, offset=render_scroll)
+                if particle.type == 'leaf':
+                    particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3 # making the parlitcle move back and forth smooth'y
+                if kill:
+                    self.particles.remove(particle)
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: # have to code the window closing
@@ -282,6 +295,7 @@ class Game:
                         self.movement[3] = False
 
             self.display_2.blit(self.display, (0, 0)) # cast display 2 on display
+            self.display_2.blit(self.display_3, (0, 0)) # cast display 3 on display
             
             # implementing transition
             if self.transition:
