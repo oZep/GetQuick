@@ -10,6 +10,7 @@ from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
 from scripts.spark import Spark
+from scripts.heart import Heart
 
 class Game:
     def __init__(self):
@@ -256,15 +257,18 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
-            hp_1 = self.assets['heart'].copy()
-            hp_2 = self.assets['heart'].copy()
-            hp_3 = self.assets['heart'].copy()
+            hp_1 = Heart(self.assets['heart'].copy(), [16, 10], 12)
+            hp_2 = Heart(self.assets['heart'].copy(), [34, 10], 12)
+            hp_3 = Heart(self.assets['heart'].copy(), [52, 10], 12)
             if self.dead <= 0 and self.dead < 1:
-                self.display.blit(hp_1, (15, 13))
+                hp_1.update()
+                hp_1.render(self.display)
             if self.dead <= -1:
-                 self.display.blit(hp_2, (33,13))
+                hp_2.update()
+                hp_2.render(self.display)
             if self.dead <= -2:
-                 self.display.blit(hp_3, (49,13))
+                hp_3.update()
+                hp_3.render(self.display)
             
             # implementing transition
             if self.transition:
