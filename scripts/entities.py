@@ -21,7 +21,8 @@ class PhysicsEntity:
         self.action = ''
         self.anim_offset = (-3, -3) #renders with an offset to pad the animation against the hitbox
         self.flip = False
-        self.set_action('idle')
+        
+        self.set_action('idle') #**
 
         self.last_movement = [0, 0]
 
@@ -130,24 +131,30 @@ class Player(PhysicsEntity):
         # Will have to change to go in the direction of the mouse
         if abs(self.dashing) > 50:
             # need where we want to dash towards
-            mpos = pygame.mouse.get_pos()
-            # direction vector between player and mouse
-            dir_vector = pygame.math.Vector2(mpos[0] - self.pos[0], mpos[1] - self.pos[1])
-            # distance between player and mouse
-            distance = dir_vector.length()
-            # Scale the velocity based on the wanted distance
-            desired_distance = 10  # Adjust this value later
-            if distance != 0:
-                scale_factor = desired_distance / distance
-                self.velocity[0] = dir_vector.x * scale_factor
-                self.velocity[1] = dir_vector.y * scale_factor
-                        
+            if self.direction == 'L': # Left
+                self.velocity[0] = 8 
+            if self.direction == 'J':
+                self.velocity[0] = -8 
+            if self.direction == 'I':
+                 self.velocity[1] = -8 
+            if self.direction == 'K':
+                 self.velocity[1] = 8           
             if abs(self.dashing) == 51: # slow down dash after 10 frames
-                self.velocity[0] *= 0.001
-                self.velocity[1] *= 0.001  # goes to 0, but never allows player to move downward?
+                self.velocity[0] *= 0.01
+                self.velocity[1] *= 0.01  # goes to 0, but never allows player to move downward
             # trail of particles in the middle of dash
             pvelocity = [abs(self.dashing)/self.dashing * random.random() * 3, 0] # particles move in the direction of the dash
             self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+    
+        if movement[0] != 0 or movement[1] != 0: # if moving horizontally
+            self.set_action('run')
+        else:
+            self.set_action('idle')
+
+        if abs(self.velocity[0]) < 0.1: # stops small sliding across screen after dash
+            self.velocity[0] = 0
+        if abs(self.velocity[1]) < 0.1:
+            self.velocity[1] = 0
 
 
     def render(self, surf, offset={0,0}):
@@ -158,16 +165,19 @@ class Player(PhysicsEntity):
             super().render(surf, offset=offset) # show player
 
     
-    def dash(self):
+    def dash(self, direction):
         '''
         makes the player dash
+        (direction) 'I' for up, 'J'/'L' for right/left, 'K' for down
         '''
+        self.direction = direction
         if not self.dashing:
             self.game.sfx['dash'].play()
             if self.flip:
                 self.dashing = -60
             else:
                 self.dashing = 60 # how long the dash is + it's direction
+                self.set_action('slide')
             
 
 class Enemy(PhysicsEntity):

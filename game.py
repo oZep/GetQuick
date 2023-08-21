@@ -20,7 +20,7 @@ class Game:
         pygame.init()
 
         # change the window caption
-        pygame.display.set_caption("Pok N Wack")
+        pygame.display.set_caption("50 Levels")
         # create window
         self.screen = pygame.display.set_mode((640,480))
 
@@ -37,13 +37,13 @@ class Game:
             'grass': load_images('tiles/grass'),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
-            'player': load_image('entities/playerS.png'),
+            'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
             'heart': load_image('UI/health.png'),
             'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=41),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
-            'player/run': Animation(load_images('entities/player/run'), img_dur=1),
+            'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/slide': Animation(load_images('entities/player/slide')),
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
@@ -245,8 +245,12 @@ class Game:
                         self.movement[2] = True
                     if event.key == pygame.K_s:
                         self.movement[3] = True
-                    if event.key == pygame.K_k:
-                        self.player.dash()
+                    if event.key == pygame.K_j:
+                        self.player.dash('J')
+                    if event.key == pygame.K_i:
+                        self.player.dash('I')
+                    if event.key == pygame.K_l:
+                        self.player.dash('L')
                 if event.type == pygame.KEYUP: # when key is released
                     if event.key == pygame.K_a: 
                         self.movement[0] = False
