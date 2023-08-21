@@ -138,7 +138,7 @@ class Player(PhysicsEntity):
             if self.direction == 'I':
                  self.velocity[1] = -8 
             if self.direction == 'K':
-                 self.velocity[1] = 8           
+                 self.velocity[1] = 8        
             if abs(self.dashing) == 51: # slow down dash after 10 frames
                 self.velocity[0] *= 0.01
                 self.velocity[1] *= 0.01  # goes to 0, but never allows player to move downward

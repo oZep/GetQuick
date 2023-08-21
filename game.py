@@ -246,8 +246,7 @@ class Game:
                 hp_3.update()
                 hp_3.render(self.display)
 
-            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 2, 12))
-            level_bar.update()
+            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 12))
             level_bar.render(self.display)
             
 
@@ -270,6 +269,8 @@ class Game:
                         self.player.dash('I')
                     if event.key == pygame.K_l:
                         self.player.dash('L')
+                    if event.key == pygame.K_k:
+                        self.player.dash('K')
                 if event.type == pygame.KEYUP: # when key is released
                     if event.key == pygame.K_a: 
                         self.movement[0] = False
