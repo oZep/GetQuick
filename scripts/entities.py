@@ -186,8 +186,9 @@ class Enemy(PhysicsEntity):
             # Using the distance formula
             dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             distance = dis.length()
-            if distance < 25 and (abs(self.game.player.pos[0] - (self.pos[0])) > 19 or self.game.player.pos[1] != self.pos[1]):
-                movement = ((self.game.player.pos[0] - self.pos[0]) * self.speed + (20 if self.flip else -20), (self.game.player.pos[1] - self.pos[1])  * self.speed)
+            if (abs(dis.x) > 19 or self.game.player.pos[1] != self.pos[1]):
+                angle = math.atan2(dis.y, dis.x)
+                movement =  (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
                 self.walking = False
             elif distance >= 25:
                 angle = math.atan2(dis.y, dis.x)

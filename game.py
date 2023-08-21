@@ -38,6 +38,7 @@ class Game:
             'stone': load_images('tiles/stone'),
             'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
+            'heart': load_image('UI/health.png'),
             'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
@@ -132,7 +133,7 @@ class Game:
             self.screenshake = max(0, self.screenshake-1) # resets screenshake value
 
             # level transiition
-            if self.dead: 
+            if self.dead >= 1: # if self.dead = 0
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level, self.max_level) # increase level
@@ -140,7 +141,7 @@ class Game:
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
-            if self.dead: # get hit once
+            if self.dead >= 1: # get hit once
                 self.dead += 1
                 if self.dead >= 10: # to make the level transitions smoother
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
@@ -173,7 +174,7 @@ class Game:
                 if kill: # if enemies update fn returns true [**]
                     self.enemies.remove(enemy) 
 
-            if not self.dead:
+            if self.dead != 1:
                 # update player movement
                 self.player.update(self.tilemap, (self.movement[1] - self.movement[0], self.movement[3] - self.movement[2]))
                 self.player.render(self.display, offset=render_scroll)
@@ -255,6 +256,16 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
+            hp_1 = self.assets['heart'].copy()
+            hp_2 = self.assets['heart'].copy()
+            hp_3 = self.assets['heart'].copy()
+            if self.dead <= 0 and self.dead < 1:
+                self.display.blit(hp_1, (15, 13))
+            if self.dead <= -1:
+                 self.display.blit(hp_2, (33,13))
+            if self.dead <= -2:
+                 self.display.blit(hp_3, (49,13))
+            
             # implementing transition
             if self.transition:
                 transition_surf = pygame.Surface(self.display.get_size())
