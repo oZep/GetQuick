@@ -22,11 +22,12 @@ class Spark:
         self.speed = max(0, self.speed - 0.1)
         return not self.speed # when speed = 0, returns true therefore removing it from the list of sparks
     
-    def render(self, surf, offset=(0,0)):
+    def render(self, surf, color, offset=(0,0)):
         '''
         renders the spark visible in a polygon shape
-        (surface, offect=(0,0))
+        (surface, color, offect=(0,0))
         '''
+        self.color = color
         render_points = [
             (self.pos[0] + math.cos(self.angle) * self.speed * 3 - offset[0], self.pos[1] + math.sin(self.angle) * self.speed * 3 - offset[1]), # want one part of the spark to be longer
             (self.pos[0] + math.cos(self.angle + math.pi * 0.5) * self.speed * 0.5 - offset[0], self.pos[1] + math.sin(self.angle + math.pi * 0.5) * self.speed * 0.5 - offset[1]),
@@ -34,4 +35,4 @@ class Spark:
             (self.pos[0] + math.cos(self.angle - math.pi * 0.5) * self.speed * 0.5 - offset[0], self.pos[1] + math.sin(self.angle - math.pi * 0.5) * self.speed * 0.5 - offset[1])
 
         ]
-        pygame.draw.polygon(surf, (255, 255, 255), render_points)
+        pygame.draw.polygon(surf, color, render_points)

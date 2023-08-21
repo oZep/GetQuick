@@ -104,7 +104,7 @@ class Player(PhysicsEntity):
         instantiates player entity
         (game, position, size)
         '''
-        super().__init__(game, 'player', pos, size)
+        super().__init__(game,'player', pos, size)
         self.dashing = 0
 
     def update(self, tilemap, movement=(0,0)):

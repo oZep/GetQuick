@@ -41,8 +41,8 @@ class Game:
             'background': load_image('background.png'),
             'heart': load_image('UI/health.png'),
             'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
-            'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
+            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=41),
+            'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=1),
             'player/slide': Animation(load_images('entities/player/slide')),
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
@@ -212,7 +212,7 @@ class Game:
             # spark affect
             for spark in self.sparks.copy():
                 kill = spark.update()
-                spark.render(self.display, offset=render_scroll)
+                spark.render(self.display, (255,255,255), offset=render_scroll)
                 if kill:
                     self.sparks.remove(spark)
 
@@ -257,9 +257,9 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
-            hp_1 = Heart(self.assets['heart'].copy(), [16, 10], 12)
-            hp_2 = Heart(self.assets['heart'].copy(), [34, 10], 12)
-            hp_3 = Heart(self.assets['heart'].copy(), [52, 10], 12)
+            hp_1 = Heart(self.assets['heart'].copy(), [16, 15], 12)
+            hp_2 = Heart(self.assets['heart'].copy(), [34, 15], 12)
+            hp_3 = Heart(self.assets['heart'].copy(), [52, 15], 12)
             if self.dead <= 0 and self.dead < 1:
                 hp_1.update()
                 hp_1.render(self.display)
