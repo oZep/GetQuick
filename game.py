@@ -232,6 +232,25 @@ class Game:
                 if kill:
                     self.particles.remove(particle)
 
+                        
+            hp_1 = Heart(self.assets['heart'].copy(), [13, 18], 15)
+            hp_2 = Heart(self.assets['heart'].copy(), [30, 18], 15)
+            hp_3 = Heart(self.assets['heart'].copy(), [47, 18], 15)
+            if self.dead <= 0 and self.dead < 1:
+                hp_1.update()
+                hp_1.render(self.display)
+            if self.dead <= -1:
+                hp_2.update()
+                hp_2.render(self.display)
+            if self.dead <= -2:
+                hp_3.update()
+                hp_3.render(self.display)
+
+            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 2, 12))
+            level_bar.update()
+            level_bar.render(self.display)
+            
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: # have to code the window closing
                     pygame.quit()
@@ -261,22 +280,7 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
-            hp_1 = Heart(self.assets['heart'].copy(), [13, 18], 15)
-            hp_2 = Heart(self.assets['heart'].copy(), [30, 18], 15)
-            hp_3 = Heart(self.assets['heart'].copy(), [47, 18], 15)
-            if self.dead <= 0 and self.dead < 1:
-                hp_1.update()
-                hp_1.render(self.display)
-            if self.dead <= -1:
-                hp_2.update()
-                hp_2.render(self.display)
-            if self.dead <= -2:
-                hp_3.update()
-                hp_3.render(self.display)
-
-            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 2, 12))
-            level_bar.update()
-            level_bar.render(self.display)
+            self.display_2.blit(self.display, (0, 0)) # cast display 2 on display
             
             # implementing transition
             if self.transition:
@@ -284,8 +288,6 @@ class Game:
                 pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (30 - abs(self.transition)) * 8) # display center of screen, 30 is the timer we chose, 30 * 8 = 180
                 transition_surf.set_colorkey((255, 255, 255)) # making the circle transparent now
                 self.display_2.blit(transition_surf, (0, 0))
-
-            self.display_2.blit(self.display, (0, 0)) # cast display 2 on display
 
             screenshake_offset = (random.random() * self.screenshake - self.screenshake / 2, random.random() * self.screenshake - self.screenshake / 2)
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset) # render (now scaled) display image on big screen

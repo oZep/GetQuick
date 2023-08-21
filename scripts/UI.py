@@ -47,6 +47,6 @@ class Levelbar:
         '''
         renders img on screen
         '''
-        myfont = pygame.font.SysFont("monospace", 15)
-        current_level = myfont.render(str(self.level), 1, (255,255,0))
+        myfont = pygame.font.SysFont(None, 20)
+        current_level = myfont.render(str(self.level), True, (255,255,0))
         surf.blit(current_level, self.pos)
