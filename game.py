@@ -122,13 +122,6 @@ class Game:
             else:
                 self.skeletons.append(Skeleton(self, spawner['pos'], (8, 15)))
                 # spawn the ememies
-        
-        self.skeleton = []
-        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1)]):
-            if spawner['variant'] == 0: 
-                self.player.pos = spawner['pos']
-            else:
-                self.skeletons.append(Skeleton(self, spawner['pos'], (8, 15)))
 
 
     def run(self):
