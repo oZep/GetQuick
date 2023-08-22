@@ -86,6 +86,8 @@ class Game:
         # screen shake
         self.screenshake = 0
 
+        self.cooldown = 0
+
 
     def load_level(self, map_id):
         self.tilemap.load('data/maps/' + str(map_id) + '.json')
@@ -154,7 +156,7 @@ class Game:
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
                 if self.dead > 40: # timer that starts when you die
                     self.load_level(self.level)
-
+            
 
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
             self.scroll[0] = self.display.get_width()/2 / 30 + 2 # x axis
@@ -180,6 +182,23 @@ class Game:
                 enemy.render(self.display, offset=render_scroll)
                 if kill: # if enemies update fn returns true [**]
                     self.enemies.remove(enemy) 
+                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
+                    if self.player.rect().colliderect(enemy): # player collides with enemy
+                        self.dead += 1 # die
+                        self.sfx['hit'].play()
+                        self.cooldown = 150
+                        self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+                        for i in range(30): # when projectile hits player
+                            # on death sparks
+                            angle = random.random() * math.pi * 2 # random angle in a circle
+                            speed = random.random() * 5
+                            self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random())) 
+                            # on death particles
+                            self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+
+            # Reduce timer
+            if self.cooldown > 0:
+                    self.cooldown -= 1
 
             if self.dead != 1:
                 # update player movement
@@ -215,6 +234,7 @@ class Game:
                             # on death particles
                             self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
 
+
             # spark affect
             for spark in self.sparks.copy():
                 kill = spark.update()
@@ -240,7 +260,7 @@ class Game:
             level_bar.render(self.display_4)
             
 
-            # black ouline based on display
+            # black ouline based on display_4
             display_mask = pygame.mask.from_surface(self.display_4)
             display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
             self.display_2.blit(display_sillhouette, (0, 0))
@@ -255,7 +275,7 @@ class Game:
                 self.display_2.blit(display_sillhouette, offset) # putting what we drew onframe back into display
             
 
-            # white ouline based on display
+            # white ouline based on display_3
             display_mask = pygame.mask.from_surface(self.display_3)
             display_sillhouette = display_mask.to_surface(setcolor=(225, 225, 225, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
             self.display_2.blit(display_sillhouette, (0, 0))
@@ -303,9 +323,9 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
-            self.display_2.blit(self.display_4, (0, 0)) # cast display 3 on display
-            self.display_2.blit(self.display, (0, 0)) # cast display 2 on display
-            self.display_2.blit(self.display_3, (0, 0)) # cast display 3 on display
+            self.display_2.blit(self.display, (0, 0)) # cast display  on display_2
+            self.display_2.blit(self.display_4, (0, 0)) 
+            self.display_2.blit(self.display_3, (0, 0)) 
             
             
             # implementing transition
