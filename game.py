@@ -28,6 +28,7 @@ class Game:
 
         self.display_3 = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
         self.display_4 = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
+        self.display_none = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
 
         self.display_2 = pygame.Surface((320, 240))
 
@@ -144,6 +145,7 @@ class Game:
             self.display.fill((0, 0, 0, 0))    # red outlines
             self.display_3.fill((0, 0, 0, 0))    # white outlines
             self.display_4.fill((0, 0, 0, 0))    # black outlines
+            self.display_none.fill((0,0,0,0))
             # clear the screen for new image generation in loop
             self.display_2.blit(self.assets['background'], (0,0)) # no outline
 
@@ -208,7 +210,7 @@ class Game:
             # render the enemies
             for enemy in self.spiders.copy():
                 kill =  enemy.update(self.tilemap, (0,0))
-                enemy.render(self.display_2, offset=render_scroll) # change outline here
+                enemy.render(self.display_none, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.spiders.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
@@ -352,9 +354,10 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
             
-            self.display_2.blit(self.display, (0, 0)) # red 
             self.display_2.blit(self.display_3, (0, 0)) # white
+            self.display_2.blit(self.display, (0, 0)) # red 
             self.display_2.blit(self.display_4, (0, 0)) # black 
+            self.display_2.blit(self.display_none, (0,0))
             
             # implementing transition
             if self.transition:
