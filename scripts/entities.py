@@ -184,13 +184,13 @@ class Player(PhysicsEntity):
                 self.set_action('slide')
             
 
-class Enemy(PhysicsEntity):
+class Skeleton(PhysicsEntity):
     def __init__(self, game, pos, size):
         '''
         instantiates the enemies
         (game, position: tuple, size)
         '''
-        super().__init__(game, 'enemy', pos, size)
+        super().__init__(game, 'skele', pos, size)
         self.walking = 1
         self.speed = 1 # enemy speed
         self.timer = 0 # enemy shooting timer

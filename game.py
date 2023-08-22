@@ -5,7 +5,7 @@ import random
 import pygame
 
 from scripts.utils import load_image, load_images, Animation
-from scripts.entities import PhysicsEntity, Player, Enemy
+from scripts.entities import PhysicsEntity, Player, Skeleton
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
@@ -44,8 +44,8 @@ class Game:
             'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
             'heart': load_image('UI/health.png'),
-            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=1),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
+            'skele/idle': Animation(load_images('entities/skele/idle'), img_dur=1),
+            'skele/run': Animation(load_images('entities/skele/run'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
@@ -115,12 +115,20 @@ class Game:
             # Rect(x, y, width, height)
 
         # spawn the ememies
-        self.enemies = []
+        self.skeletons = []
         for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1)]):
             if spawner['variant'] == 0: 
                 self.player.pos = spawner['pos']
             else:
-                self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
+                self.skeletons.append(Skeleton(self, spawner['pos'], (8, 15)))
+                # spawn the ememies
+        
+        self.skeleton = []
+        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1)]):
+            if spawner['variant'] == 0: 
+                self.player.pos = spawner['pos']
+            else:
+                self.skeletons.append(Skeleton(self, spawner['pos'], (8, 15)))
 
 
     def run(self):
@@ -144,7 +152,7 @@ class Game:
             self.screenshake = max(0, self.screenshake-1) # resets screenshake value
 
             # level transiition
-            if not len(self.enemies): 
+            if not len(self.skeletons): 
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level + 1, self.max_level -1) # increase level
@@ -179,11 +187,11 @@ class Game:
             self.tilemap.render(self.display_3, offset=render_scroll)
 
             # render the enemies
-            for enemy in self.enemies.copy():
+            for enemy in self.skeletons.copy():
                 kill =  enemy.update(self.tilemap, (0,0))
                 enemy.render(self.display_4, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
-                    self.enemies.remove(enemy) 
+                    self.skeletons.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
                     if self.player.rect().colliderect(enemy): # player collides with enemy
                         self.dead += 1 # die
