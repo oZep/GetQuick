@@ -277,7 +277,7 @@ class Spider(PhysicsEntity):
         (game, position: tuple, size)
         '''
         super().__init__(game, 'spid', pos, size)
-        self.speed = 1 # enemy speed
+        self.speed = 1.5 # enemy speed
         self.bite = 0 # counter
     
     def update(self, tilemap, movement=(0,0)):
@@ -289,11 +289,11 @@ class Spider(PhysicsEntity):
         # Using the distance formula
         dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
         distance = dis.length()        
-        if distance < 15: # back up after biting, size of player -1 to be more annoying
+        if distance < 12: # back up after biting, size of player -2 to be more annoying
             angle = math.atan2(dis.y, dis.x)
-            movement = (-math.cos(angle) * self.speed, -math.sin(angle) * self.speed)
+            movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed) # + math.pi so it's the opposite direction
             self.bite =  150 # t
-        if not self.bite:
+        if not self.bite or distance > 25:
             angle = math.atan2(dis.y, dis.x)
             movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed) # the same rate that the player has before he can get hit again by collision
         else:

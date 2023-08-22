@@ -76,7 +76,7 @@ class Game:
         #self.clouds = Clouds(self.assets['clouds'], count=16)
 
         # initalizing player
-        self.player = Player(self, (self.display.get_width()/2, self.display.get_height()/2), (8, 15))
+        self.player = Player(self, (self.display.get_width()/2, self.display.get_height()/2), (15, 15))
 
         # initalizing tilemap
         self.tilemap = Tilemap(self, tile_size=16)
@@ -187,10 +187,10 @@ class Game:
             # render the enemies
             for enemy in self.skeletons.copy():
                 kill =  enemy.update(self.tilemap, (0,0))
-                enemy.render(self.display_2, offset=render_scroll) # change outline here
+                enemy.render(self.display_4, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.skeletons.remove(enemy) 
-                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing and dead cooldown for collisions is over
+                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing and dead cooldown for collisions is
                     if self.player.rect().colliderect(enemy): # player collides with enemy
                         self.dead += 1 # die
                         self.sfx['hit'].play()
