@@ -270,6 +270,66 @@ class Skeleton(PhysicsEntity):
     
 
         
+class Spider(PhysicsEntity):
+    def __init__(self, game, pos, size):
+        '''
+        instantiates the spider
+        (game, position: tuple, size)
+        '''
+        super().__init__(game, 'spider', pos, size)
+        self.walking = 1
+        self.speed = 1 # enemy speed
+        self.timer = 0 # enemy shooting timer
+    
+    def update(self, tilemap, movement=(0,0)):
+        '''
+        updates the movement
+        (tilemap, movement=(0,0))
+        '''
 
+        # Using the distance formula
+        dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
+        distance = dis.length()
+        if distance >= 10:
+            angle = math.atan2(dis.y, dis.x)
+            movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
+            self.walking = True
+        else:
+            self.walking = False
+            movement= (0, 0)
+        
+       
+        super().update(tilemap, movement=movement)
+
+        if movement[0] != 0:
+            self.set_action('run')
+        else:
+            self.set_action('idle')
+
+        if abs(self.game.player.dashing) >= 50:
+            if self.rect().colliderect(self.game.player.rect()): # if enemy hitbox collides with player
+                self.game.screenshake = max(16, self.game.screenshake)  # apply screenshake
+                self.game.sfx['hit'].play()
+                for i in range(30): # enemy death effect
+                    # on death sparks
+                    angle = random.random() * math.pi * 2 # random angle in a circle
+                    speed = random.random() * 5
+                    self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random())) 
+                    # on death particles
+                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random())) # left
+                self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random())) # right
+                return True # [**]
+                
+
+    def render(self, surf, offset=(0, 0)):
+        super().render(surf, offset=offset)
+
+    
+
+        
+
+
+        
 
         
