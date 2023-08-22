@@ -20,9 +20,9 @@ class Game:
         pygame.init()
 
         # change the window caption
-        pygame.display.set_caption("50 Levels")
+        pygame.display.set_caption("50 Levels of Hell")
         # create window
-        self.screen = pygame.display.set_mode((640,480))
+        self.screen = pygame.display.set_mode((640, 480)) # (640, 480), (960, 720), (768, 576)
 
         self.display = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
 
