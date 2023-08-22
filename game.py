@@ -48,6 +48,8 @@ class Game:
             'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=41),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
+            'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
+            'player/runUP': Animation(load_images('entities/player/runUP'), img_dur=6),
             'player/slide': Animation(load_images('entities/player/slide')),
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
@@ -256,8 +258,8 @@ class Game:
                 hp_3.update()
                 hp_3.render(self.display_4)
 
-            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 10))
-            level_bar.render(self.display_4, 14)
+            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 13))
+            level_bar.render(self.display_4, 22)
             
 
             # black ouline based on display_4
@@ -322,10 +324,10 @@ class Game:
                         self.movement[2] = False
                     if event.key == pygame.K_s:
                         self.movement[3] = False
-
-            self.display_2.blit(self.display, (0, 0)) # cast display  on display_2
-            self.display_2.blit(self.display_3, (0, 0)) 
-            self.display_2.blit(self.display_4, (0, 0)) 
+            
+            self.display_2.blit(self.display, (0, 0)) # red 
+            self.display_2.blit(self.display_3, (0, 0)) # white
+            self.display_2.blit(self.display_4, (0, 0)) # black 
             
             # implementing transition
             if self.transition:
