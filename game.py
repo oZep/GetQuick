@@ -44,8 +44,8 @@ class Game:
             'player': load_image('entities/player.png'),
             'background': load_image('background.png'),
             'heart': load_image('UI/health.png'),
-            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=41),
+            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=1),
+            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
@@ -53,7 +53,7 @@ class Game:
             'player/slide': Animation(load_images('entities/player/slide')),
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
-            'gun': load_image('gun.png'),
+            'bow': load_image('bow.png'),
             'projectile': load_image('projectile.png'),
         }
 
@@ -181,7 +181,7 @@ class Game:
             # render the enemies
             for enemy in self.enemies.copy():
                 kill =  enemy.update(self.tilemap, (0,0))
-                enemy.render(self.display, offset=render_scroll)
+                enemy.render(self.display_4, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.enemies.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
@@ -213,7 +213,7 @@ class Game:
                 projectile[0][0] += projectile[1] 
                 projectile[2] += 1
                 img = self.assets['projectile']
-                self.display_4.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
+                self.display_4.blit(img if projectile[1] > 0 else pygame.transform.flip(img, True, False), (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
                 
                 # keep this but change it to the borders of the map, also might want some obsticles later
                 if self.tilemap.solid_check(projectile[0]): # if location is a solid tile
