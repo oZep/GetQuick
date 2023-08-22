@@ -120,7 +120,7 @@ class Game:
         self.spiders = []
         # spawn the ememies
         self.skeletons = []
-        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawner', 2)], True):
+        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawners', 2)]):
             if spawner['variant'] == 0: 
                 self.player.pos = spawner['pos']
             elif spawner['variant'] == 1:
@@ -187,10 +187,10 @@ class Game:
             # render the enemies
             for enemy in self.skeletons.copy():
                 kill =  enemy.update(self.tilemap, (0,0))
-                enemy.render(self.display_4, offset=render_scroll) # change outline here
+                enemy.render(self.display_2, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.skeletons.remove(enemy) 
-                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
+                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing and dead cooldown for collisions is over
                     if self.player.rect().colliderect(enemy): # player collides with enemy
                         self.dead += 1 # die
                         self.sfx['hit'].play()
@@ -208,7 +208,7 @@ class Game:
             # render the enemies
             for enemy in self.spiders.copy():
                 kill =  enemy.update(self.tilemap, (0,0))
-                enemy.render(self.display_3, offset=render_scroll) # change outline here
+                enemy.render(self.display_2, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.spiders.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing

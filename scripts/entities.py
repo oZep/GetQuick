@@ -200,9 +200,9 @@ class Skeleton(PhysicsEntity):
             # Using the distance formula
             dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             distance = dis.length()
-            if (abs(self.game.player.pos[1] - self.pos[1]) != 0 and distance <= 20 and (abs(self.game.player.pos[0] - self.pos[0]) <= 20)):
+            if (abs(self.game.player.pos[0] - self.pos[0]) != 0 and distance <= 20 and (abs(self.game.player.pos[1] - self.pos[1]) <= 20)):
                 angle = math.atan2(dis.y, dis.x)
-                movement = (self.game.player.pos[0] + 23, math.sin(angle) * self.speed)
+                movement = (math.cos(angle) * self.speed, self.game.player.pos[1] + 23)
                 self.walking = True
                 # align on horizontal 
             elif distance >= 35:
@@ -277,9 +277,8 @@ class Spider(PhysicsEntity):
         (game, position: tuple, size)
         '''
         super().__init__(game, 'spid', pos, size)
-        self.walking = 1
         self.speed = 1 # enemy speed
-        self.timer = 0 # enemy shooting timer
+        self.bite = 0 # counter
     
     def update(self, tilemap, movement=(0,0)):
         '''
@@ -289,15 +288,20 @@ class Spider(PhysicsEntity):
 
         # Using the distance formula
         dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-        distance = dis.length()
-        if distance >= 10:
+        distance = dis.length()        
+        if distance < 15: # back up after biting, size of player -1 to be more annoying
             angle = math.atan2(dis.y, dis.x)
-            movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
-            self.walking = True
+            movement = (-math.cos(angle) * self.speed, -math.sin(angle) * self.speed)
+            self.bite =  150 # t
+        if not self.bite:
+            angle = math.atan2(dis.y, dis.x)
+            movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed) # the same rate that the player has before he can get hit again by collision
         else:
-            self.walking = False
             movement= (0, 0)
         
+        # Reduce timer
+        if self.bite > 0:
+            self.bite -= 1
        
         super().update(tilemap, movement=movement)
 
