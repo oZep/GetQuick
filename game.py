@@ -27,6 +27,7 @@ class Game:
         self.display = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
 
         self.display_3 = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
+        self.display_4 = pygame.Surface((320, 240), pygame.SRCALPHA) # render on smaller resolution then scale it up to bigger screen
 
         self.display_2 = pygame.Surface((320, 240))
 
@@ -130,8 +131,9 @@ class Game:
 
         # creating an infinite game loop
         while True:
-            self.display.fill((0, 0, 0, 0))    # outlines
-            self.display_3.fill((0, 0, 0, 0))    # outlines
+            self.display.fill((0, 0, 0, 0))    # red outlines
+            self.display_3.fill((0, 0, 0, 0))    # white outlines
+            self.display_4.fill((0, 0, 0, 0))    # black outlines
             # clear the screen for new image generation in loop
             self.display_2.blit(self.assets['background'], (0,0)) # no outline
 
@@ -190,7 +192,7 @@ class Game:
                 projectile[0][0] += projectile[1] 
                 projectile[2] += 1
                 img = self.assets['projectile']
-                self.display.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
+                self.display_4.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
                 
                 # keep this but change it to the borders of the map, also might want some obsticles later
                 if self.tilemap.solid_check(projectile[0]): # if location is a solid tile
@@ -216,7 +218,7 @@ class Game:
             # spark affect
             for spark in self.sparks.copy():
                 kill = spark.update()
-                spark.render(self.display, (255,255,255), offset=render_scroll)
+                spark.render(self.display_4, (255,255,255), offset=render_scroll)
                 if kill:
                     self.sparks.remove(spark)
 
@@ -235,10 +237,17 @@ class Game:
                 hp_3.render(self.display_2)
 
             level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 12))
-            level_bar.render(self.display_2)
+            level_bar.render(self.display_4)
             
 
             # black ouline based on display
+            display_mask = pygame.mask.from_surface(self.display_4)
+            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
+            self.display_2.blit(display_sillhouette, (0, 0))
+            for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                self.display_2.blit(display_sillhouette, offset) # putting what we drew onframe back into display
+
+            # red ouline based on display
             display_mask = pygame.mask.from_surface(self.display)
             display_sillhouette = display_mask.to_surface(setcolor=(225, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
             self.display_2.blit(display_sillhouette, (0, 0))
@@ -294,8 +303,10 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
 
+            self.display_2.blit(self.display_4, (0, 0)) # cast display 3 on display
             self.display_2.blit(self.display, (0, 0)) # cast display 2 on display
             self.display_2.blit(self.display_3, (0, 0)) # cast display 3 on display
+            
             
             # implementing transition
             if self.transition:
