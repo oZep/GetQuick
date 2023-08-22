@@ -248,16 +248,16 @@ class Game:
             hp_3 = Heart(self.assets['heart'].copy(), [47, 19], 15)
             if self.dead <= 0 and self.dead < 1:
                 hp_1.update()
-                hp_1.render(self.display_2)
+                hp_1.render(self.display_4)
             if self.dead <= -1:
                 hp_2.update()
-                hp_2.render(self.display_2)
+                hp_2.render(self.display_4)
             if self.dead <= -2:
                 hp_3.update()
-                hp_3.render(self.display_2)
+                hp_3.render(self.display_4)
 
-            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 12))
-            level_bar.render(self.display_4)
+            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 10))
+            level_bar.render(self.display_4, 14)
             
 
             # black ouline based on display_4
@@ -324,9 +324,8 @@ class Game:
                         self.movement[3] = False
 
             self.display_2.blit(self.display, (0, 0)) # cast display  on display_2
-            self.display_2.blit(self.display_4, (0, 0)) 
             self.display_2.blit(self.display_3, (0, 0)) 
-            
+            self.display_2.blit(self.display_4, (0, 0)) 
             
             # implementing transition
             if self.transition:
