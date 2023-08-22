@@ -46,6 +46,8 @@ class Game:
             'heart': load_image('UI/health.png'),
             'skele/idle': Animation(load_images('entities/skele/idle'), img_dur=1),
             'skele/run': Animation(load_images('entities/skele/run'), img_dur=4),
+            'spider/idle': Animation(load_images('entities/spider/idle'), img_dur=1),
+            'spider/run': Animation(load_images('entities/spider/run'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
