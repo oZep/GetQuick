@@ -276,7 +276,7 @@ class Spider(PhysicsEntity):
         instantiates the spider
         (game, position: tuple, size)
         '''
-        super().__init__(game, 'spider', pos, size)
+        super().__init__(game, 'spid', pos, size)
         self.walking = 1
         self.speed = 1 # enemy speed
         self.timer = 0 # enemy shooting timer

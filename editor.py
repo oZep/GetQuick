@@ -128,6 +128,7 @@ class Editor:
                         if event.button == 5: # scroll wheel down, % trick so no null pointer
                             self.tile_group = (self.tile_group + 1) % len(self.tile_list)
                             self.tile_variant = 0 
+
                   
 
                 if event.type == pygame.KEYDOWN:

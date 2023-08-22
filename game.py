@@ -5,7 +5,7 @@ import random
 import pygame
 
 from scripts.utils import load_image, load_images, Animation
-from scripts.entities import PhysicsEntity, Player, Skeleton
+from scripts.entities import PhysicsEntity, Player, Skeleton, Spider
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
@@ -41,13 +41,13 @@ class Game:
             'grass': load_images('tiles/grass'),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
-            'player': load_image('entities/player.png'),
+            'player': load_image('entities/player/player.png'),
             'background': load_image('background.png'),
             'heart': load_image('UI/health.png'),
             'skele/idle': Animation(load_images('entities/skele/idle'), img_dur=1),
             'skele/run': Animation(load_images('entities/skele/run'), img_dur=4),
-            'spider/idle': Animation(load_images('entities/spider/idle'), img_dur=1),
-            'spider/run': Animation(load_images('entities/spider/run'), img_dur=4),
+            'spid/idle': Animation(load_images('entities/spider/idle'), img_dur=1),
+            'spid/run': Animation(load_images('entities/spider/run'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
@@ -115,16 +115,19 @@ class Game:
         for tree in self.tilemap.extract([('large_decor', 2)], keep=True):
             self.leaf_spawners.append(pygame.Rect((4 + tree['pos'][0]), (4 + tree['pos'][1]), 23, 13)) # offsetting by 4 due to tree sprite
             # Rect(x, y, width, height)
-
+        
+        # spawn the ememies
+        self.spiders = []
         # spawn the ememies
         self.skeletons = []
-        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1)]):
+        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawner', 2)]):
             if spawner['variant'] == 0: 
                 self.player.pos = spawner['pos']
+            elif spawner['variant'] == 1:
+                self.skeletons.append(Skeleton(self, spawner['pos'], (7, 15)))
             else:
-                self.skeletons.append(Skeleton(self, spawner['pos'], (8, 15)))
+                self.spiders.append(Spider(self, spawner['pos'], (10, 7)))
                 # spawn the ememies
-
 
     def run(self):
         '''
@@ -147,7 +150,7 @@ class Game:
             self.screenshake = max(0, self.screenshake-1) # resets screenshake value
 
             # level transiition
-            if not len(self.skeletons): 
+            if not len(self.skeletons) and not len(self.spiders): 
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level + 1, self.max_level -1) # increase level
@@ -176,7 +179,7 @@ class Game:
                     pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)
                     self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
 
-            # ssself.clouds.update() # updates clouds before the rest of the tiles
+            # self.clouds.update() # updates clouds before the rest of the tiles
             # self.clouds.render(self.display_2, offset=render_scroll)
 
             self.tilemap.render(self.display_3, offset=render_scroll)
@@ -187,6 +190,27 @@ class Game:
                 enemy.render(self.display_4, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.skeletons.remove(enemy) 
+                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
+                    if self.player.rect().colliderect(enemy): # player collides with enemy
+                        self.dead += 1 # die
+                        self.sfx['hit'].play()
+                        self.cooldown = 150
+                        self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+                        for i in range(30): # when projectile hits player
+                            # on death sparks
+                            angle = random.random() * math.pi * 2 # random angle in a circle
+                            speed = random.random() * 5
+                            self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random())) 
+                            # on death particles
+                            self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+
+            
+            # render the enemies
+            for enemy in self.spiders.copy():
+                kill =  enemy.update(self.tilemap, (0,0))
+                enemy.render(self.display_3, offset=render_scroll) # change outline here
+                if kill: # if enemies update fn returns true [**]
+                    self.spiders.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
                     if self.player.rect().colliderect(enemy): # player collides with enemy
                         self.dead += 1 # die
