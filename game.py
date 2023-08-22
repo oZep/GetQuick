@@ -161,8 +161,8 @@ class Game:
             
 
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
-            self.scroll[0] = self.display.get_width()/2 / 30 + 2 # x axis
-            self.scroll[1] = self.display.get_height()/2/ 30 + 2
+            self.scroll[0] = self.display.get_width()/2 / 30 + 3 # x axis
+            self.scroll[1] = self.display.get_height()/2/ 30 + 3
 
             # fix the jitter
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
