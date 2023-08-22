@@ -191,7 +191,7 @@ class Enemy(PhysicsEntity):
         (game, position: tuple, size)
         '''
         super().__init__(game, 'enemy', pos, size)
-        self.walking = 0
+        self.walking = 1
         self.speed = 1 # enemy speed
         self.timer = 0 # enemy shooting timer
     
@@ -200,30 +200,33 @@ class Enemy(PhysicsEntity):
             # Using the distance formula
             dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             distance = dis.length()
-            if (abs(dis.x) > 19 or self.game.player.pos[1] != self.pos[1]):
+            if (abs(self.game.player.pos[1] - self.pos[1]) != 0 and distance <= 20 and (abs(self.game.player.pos[0] - self.pos[0]) <= 20)):
                 angle = math.atan2(dis.y, dis.x)
-                movement =  (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
-                self.walking = False
-            elif distance >= 25:
+                movement = (self.game.player.pos[0] + 23, math.sin(angle) * self.speed)
+                self.walking = True
+                # align on horizontal 
+            elif distance >= 35:
                 angle = math.atan2(dis.y, dis.x)
-                movement =  (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
+                movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
                 self.walking = True
             else:
                 self.walking = False
+                movement= (0, 0)
             if not self.walking:
                 self.timer = max(0, self.timer - 1) # we will get one frame where it goes to zero, where the value of self.walking = false
                 # get angle 
                 angle = math.atan2(dis.y, dis.x)
                 if not self.timer: # if self.timer = 0
                     if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
-                        self.timer = 150 # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 120 # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         self.game.sfx['shoot'].play()
-                        self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -1.5, 0])
+                        self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -2.5, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
                     if (not self.flip and dis[0] > 0):
-                        self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 1.5, 0])
-                        self.timer = 150  # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 2.5, 0])
+                        self.timer = 120  # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.game.sfx['shoot'].play()
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
         elif random.random() < 0.01: # 1 in every 6.1 seconds
@@ -260,9 +263,9 @@ class Enemy(PhysicsEntity):
         super().render(surf, offset=offset)
 
         if self.flip:
-            surf.blit(pygame.transform.flip(self.game.assets['gun'], True, False), (self.rect().centerx - 4 - self.game.assets['gun'].get_width() - offset[0], self.rect().centery - offset[1])) # renders the gun in the player
+            surf.blit(pygame.transform.flip(self.game.assets['bow'], True, False), (self.rect().centerx + 1 - self.game.assets['bow'].get_width() + 2 - offset[0], self.rect().centery - 8 - offset[1])) # renders the bow 
         else:
-            surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
+            surf.blit(self.game.assets['bow'], (self.rect().centerx - 1 - offset[0], self.rect().centery - 8 - offset[1]))
 
     
 
