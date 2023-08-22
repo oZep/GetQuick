@@ -120,7 +120,7 @@ class Game:
         self.spiders = []
         # spawn the ememies
         self.skeletons = []
-        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawner', 2)]):
+        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawner', 2)], True):
             if spawner['variant'] == 0: 
                 self.player.pos = spawner['pos']
             elif spawner['variant'] == 1:
