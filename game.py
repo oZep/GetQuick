@@ -170,7 +170,7 @@ class Game:
             # ssself.clouds.update() # updates clouds before the rest of the tiles
             # self.clouds.render(self.display_2, offset=render_scroll)
 
-            self.tilemap.render(self.display, offset=render_scroll)
+            self.tilemap.render(self.display_3, offset=render_scroll)
 
             # render the enemies
             for enemy in self.enemies.copy():
@@ -226,21 +226,21 @@ class Game:
             hp_3 = Heart(self.assets['heart'].copy(), [47, 19], 15)
             if self.dead <= 0 and self.dead < 1:
                 hp_1.update()
-                hp_1.render(self.display)
+                hp_1.render(self.display_2)
             if self.dead <= -1:
                 hp_2.update()
-                hp_2.render(self.display)
+                hp_2.render(self.display_2)
             if self.dead <= -2:
                 hp_3.update()
-                hp_3.render(self.display)
+                hp_3.render(self.display_2)
 
             level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 12))
-            level_bar.render(self.display)
+            level_bar.render(self.display_2)
             
 
             # black ouline based on display
             display_mask = pygame.mask.from_surface(self.display)
-            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
+            display_sillhouette = display_mask.to_surface(setcolor=(225, 0, 0, 180), unsetcolor=(0, 0, 0, 0)) # 180 opaque, 0 transparent
             self.display_2.blit(display_sillhouette, (0, 0))
             for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 self.display_2.blit(display_sillhouette, offset) # putting what we drew onframe back into display
