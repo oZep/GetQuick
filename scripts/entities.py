@@ -218,14 +218,14 @@ class Skeleton(PhysicsEntity):
                 angle = math.atan2(dis.y, dis.x)
                 if not self.timer: # if self.timer = 0
                     if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
-                        self.timer = 120 # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 100 # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         self.game.sfx['shoot'].play()
                         self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -2.5, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
                     if (not self.flip and dis[0] > 0):
                         self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 2.5, 0])
-                        self.timer = 120  # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 100  # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         self.game.sfx['shoot'].play()
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
