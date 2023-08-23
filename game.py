@@ -288,7 +288,7 @@ class Game:
                 hp_3.update()
                 hp_3.render(self.display_black)
 
-            level_bar = Levelbar(self.level, pos=(self.display.get_width() // 2 - 25, 13))
+            level_bar = Levelbar(self.level, pos=(self.display_red.get_width() // 2 - 25, 13))
             level_bar.render(self.display_black, 22)
             
 
