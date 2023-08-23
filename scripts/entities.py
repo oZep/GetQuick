@@ -199,33 +199,27 @@ class Skeleton(PhysicsEntity):
         if self.walking:
             # Using the distance formula
             dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-            distance = dis.length()
-            if (abs(self.game.player.pos[0] - self.pos[0]) != 0 and distance <= 20 and (abs(self.game.player.pos[1] - self.pos[1]) <= 20)):
-                angle = math.atan2(dis.y, dis.x)
-                movement = (math.cos(angle) * self.speed, self.game.player.pos[1] + 23)
-                self.walking = True
-                # align on horizontal 
-            elif distance >= 35:
+            distance = dis.length()            
+            if distance >= 45:
                 angle = math.atan2(dis.y, dis.x)
                 movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
                 self.walking = True
-            else:
-                self.walking = False
-                movement= (0, 0)
-            if not self.walking:
-                self.timer = max(0, self.timer - 1) # we will get one frame where it goes to zero, where the value of self.walking = false
+            elif (abs(self.game.player.pos[1] - self.pos[1]) != 0):
+                angle = math.atan2(dis.y, dis.x)
+                movement = (0, math.sin(angle) * self.speed * 1.5)
+                self.walking = True
                 # get angle 
                 angle = math.atan2(dis.y, dis.x)
                 if not self.timer: # if self.timer = 0
                     if (self.flip and dis[0] < 0): # player is left of enemy, and enemy is looking left
-                        self.timer = 100 # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 60 # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         self.game.sfx['shoot'].play()
                         self.game.projectiles.append([[self.rect().centerx - 7, self.rect().centery], -2.5, 0])
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5 + math.pi, 2 + random.random())) # getting pos from projectiles in it's list, facing left
                     if (not self.flip and dis[0] > 0):
                         self.game.projectiles.append([[self.rect().centerx + 7, self.rect().centery], 2.5, 0])
-                        self.timer = 100  # Set a cooldown timer for shooting (300 frames = 5 seconds)
+                        self.timer = 60  # Set a cooldown timer for shooting (300 frames = 5 seconds)
                         self.game.sfx['shoot'].play()
                         for i in range(4):
                             self.game.sparks.append(Spark(self.game.projectiles[-1][0], random.random() - 0.5, 2 + random.random())) # facing right
@@ -238,7 +232,7 @@ class Skeleton(PhysicsEntity):
        
         super().update(tilemap, movement=movement)
 
-        if movement[0] != 0:
+        if movement[0] != 0 or movement[1] != 0:
             self.set_action('run')
         else:
             self.set_action('idle')
