@@ -165,6 +165,7 @@ class Game:
                 if self.dead >= 10: # to make the level transitions smoother
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
                 if self.dead > 40: # timer that starts when you die
+                    self.level = 0
                     self.load_level(0) # start at level 0 again. self.load_level(self.level)
             
 
