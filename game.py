@@ -112,6 +112,7 @@ class Game:
         self.transition = -30
 
         # leaf particle affect
+        # change this to be like embers that spawns maybe on the border of the map, or i can make a transparent spawner
         self.leaf_spawners = []
         for tree in self.tilemap.extract([('large_decor', 2)], keep=True):
             self.leaf_spawners.append(pygame.Rect((4 + tree['pos'][0]), (4 + tree['pos'][1]), 23, 13)) # offsetting by 4 due to tree sprite
