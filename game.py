@@ -238,7 +238,7 @@ class Game:
 
             # render the enemies
             for enemy in self.boss.copy():
-                kill =  enemy.update(self.tilemap, [0,0])
+                kill =  enemy.update(self.tilemap)
                 enemy.render(self.display_red, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.boss.remove(enemy) 

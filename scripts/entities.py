@@ -336,36 +336,66 @@ class Boss(PhysicsEntity):
         self.speed = 9 # enemy speed
         self.count = 0 # staff movement
         self.max = 50
-        self.timer = 0
+        self.timer = 100 # so we dont teleport at the player right away
         self.hearts = -6
+        self.death_timer = 0
+        self.tele = [0,0]
+        self.tele_timer = -1
+        self.particle = 1 # particle affects
+        self.pos = pos
 
-    def update(self, tilemap, movement=[0,0]):
+    def update(self, tilemap, movement=(0,0)):
         '''
         updates the movement
         (tilemap, movement=(0,0))
         '''
-        self.velocity = [0, 0]
+
         if self.timer == 0:
             self.timer = 500 
-            for i in range(25): # do 20 times
+
+            if self.game.player.pos[0] > 160: # decided where boss should spawn
+                self.tele = [self.game.player.pos[0] - 15, self.game.player.pos[1]]
+            elif self.game.player.pos[0] < 160:
+                self.tele = [self.game.player.pos[0] + 14, self.game.player.pos[1]]
+            
+            self.tele_timer = 15
+            self.particle = 0
+            self.game.creenshake = max(16, self.game.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+            for i in range(40): # do 20 times
                 # for burst of particles
-                angle = random.random() * math.pi * 2
+                angle = random.random() * math.pi * 10
                 speed = random.random() * 0.5 + 0.5 # random from 0.5 to 1
                 pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
                 self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+                self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random())) 
             
-            if self.game.player.pos[0] > 160: # decided where boss should spawn
-                self.pos = [self.game.player.pos[0] - 15, self.game.player.pos[1]]
-            elif self.game.player.pos[0] < 160:
-                self.pos = [self.game.player.pos[0] + 14, self.game.player.pos[1]]
+        
+        if self.tele_timer == 0: # teleports after 1 sec
+            self.game.creenshake = max(16, self.game.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+            self.pos = self.tele # set position as teleport location
+            if self.particle == 0:
+                for i in range(40): # do 20 times
+                    # for burst of particles
+                    angle = random.random() * math.pi * 10
+                    speed = random.random() * 0.5 + 0.5 # random from 0.5 to 1
+                    pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
+                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+                    self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random())) 
+            self.particle = 1
+            self.tele_timer = -1 # so it doesnt activate again
+        
             
-        # Reduce timer
+        # Reduce timers
         if self.timer > 0:
             self.timer -= 1
-        self.count = (self.count + 1) % self.max
+        if self.death_timer > 0:
+            self.death_timer -= 1
+        if self.tele_timer > 0:
+            self.tele_timer -= 1
+        self.count = (self.count + 1) % self.max # count for staff animation
 
 
-        if abs(self.game.player.dashing) >= 50 and self.timer > 350:
+        if abs(self.game.player.dashing) >= 50 and self.timer > 350 and self.death_timer == 0:
             if self.rect().colliderect(self.game.player.rect()): # if enemy hitbox collides with player
                 self.game.screenshake = max(16, self.game.screenshake)  # apply screenshake
                 self.game.sfx['hit'].play()
@@ -379,6 +409,7 @@ class Boss(PhysicsEntity):
                 self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random())) # left
                 self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random())) # right
                 
+                self.death_timer = 150 # 500 - 350 so max heart loss is 1
                 self.hearts += 1
                 if self.hearts == 0:
                     return True # [**]
@@ -393,30 +424,30 @@ class Boss(PhysicsEntity):
             surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 18 - offset[1])) # renders the staff
         
         # rendering the hearts, we want 6 heart levels, gold heart is a shield, red is actually hit
-        hp_1 = Heart(self.game.assets['heart'].copy(), [255, 19], 15)
+        hp_1 = Heart(self.game.assets['heart'].copy(), [250, 19], 15)
         hp_2 = Heart(self.game.assets['heart'].copy(), [270, 19], 15)
         hp_3 = Heart(self.game.assets['heart'].copy(), [290, 19], 15)
-        hp_4 = Heart(self.game.assets['sheild'].copy(), [255, 19], 15)
+        hp_4 = Heart(self.game.assets['sheild'].copy(), [250, 19], 15)
         hp_5 = Heart(self.game.assets['sheild'].copy(), [270, 19], 15)
         hp_6 = Heart(self.game.assets['sheild'].copy(), [290, 19], 15)
         if self.hearts < 0:
             hp_1.update()
-            hp_1.render(self.game.display_red)
+            hp_1.render(self.game.display_black)
         if self.hearts < -1:
             hp_2.update()
-            hp_2.render(self.game.display_red)
+            hp_2.render(self.game.display_black)
         if self.hearts < -2:
             hp_3.update()
-            hp_3.render(self.game.display_red)
+            hp_3.render(self.game.display_black)
         if self.hearts < -3:
             hp_4.update()
-            hp_4.render(self.game.display_red)
+            hp_4.render(self.game.display_black)
         if self.hearts < -4:
             hp_5.update()
-            hp_5.render(self.game.display_red)
+            hp_5.render(self.game.display_black)
         if self.hearts < -5:
             hp_6.update()
-            hp_6.render(self.game.display_red)
+            hp_6.render(self.game.display_black)
 
 
 
