@@ -62,6 +62,7 @@ class Game:
             'bow': load_image('bow.png'),
             'staff': load_image('staff.png'),
             'projectile': load_image('projectile.png'),
+            'magic': load_image('magic.png'),
         }
 
         # adding sound
