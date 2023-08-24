@@ -5,7 +5,7 @@ import random
 import pygame
 
 from scripts.utils import load_image, load_images, Animation
-from scripts.entities import PhysicsEntity, Player, Skeleton, Spider
+from scripts.entities import PhysicsEntity, Player, Skeleton, Spider, Boss
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
@@ -49,6 +49,7 @@ class Game:
             'skele/run': Animation(load_images('entities/skele/run'), img_dur=4),
             'spid/idle': Animation(load_images('entities/spider/idle'), img_dur=1),
             'spid/run': Animation(load_images('entities/spider/run'), img_dur=4),
+            'boss/idle': Animation(load_images('entities/spider/idle'), img_dur=4),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
@@ -122,13 +123,16 @@ class Game:
         self.spiders = []
         # spawn the ememies
         self.skeletons = []
-        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawners', 2)]):
+        self.boss = []
+        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawners', 2), ('spawners', 3)]):
             if spawner['variant'] == 0: 
                 self.player.pos = spawner['pos']
             elif spawner['variant'] == 1:
                 self.skeletons.append(Skeleton(self, spawner['pos'], (7, 15)))
-            else:
+            elif spawner['variant'] == 2:
                 self.spiders.append(Spider(self, spawner['pos'], (10, 7)))
+            else:
+                self.boss.append(Boss(self, spawner['pos'], (21, 31)))
                 # spawn the ememies
 
     def run(self):

@@ -45,4 +45,5 @@ ALL entity art and assets are done by me!
 - updated editor for visibility, and added new block
 - Fixed level loader
 - Updated the naming convensions for the different types of displays
+- Added new entity 'Boss'
 

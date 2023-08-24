@@ -325,9 +325,24 @@ class Spider(PhysicsEntity):
 
     
 
+class Boss(PhysicsEntity):
+    def __init__(self, game, pos, size):
+        '''
+        instantiates the spider
+        (game, position: tuple, size)
+        '''
+        super().__init__(game, 'Boss', pos, size)
+        self.speed = 4 # enemy speed
+
+    def update(self, tilemap, movement=(0,0)):
+        '''
+        updates the movement
+        (tilemap, movement=(0,0))
+        '''
+
         
-
-
+    def render(self, surf, offset=(0, 0)):
+        super().render(surf, offset=offset)
         
 
         
