@@ -4,6 +4,7 @@ import random
 
 from scripts.particle import Particle
 from scripts.spark import Spark
+from scripts.UI import Heart
 
 class PhysicsEntity:
     def __init__(self, game, e_type, pos, size):
@@ -332,25 +333,94 @@ class Boss(PhysicsEntity):
         (game, position: tuple, size)
         '''
         super().__init__(game, 'boss', pos, size)
-        self.speed = 4 # enemy speed
-        self.count = 0
+        self.speed = 9 # enemy speed
+        self.count = 0 # staff movement
         self.max = 50
+        self.timer = 0
+        self.hearts = -6
 
-    def update(self, tilemap, movement=(0,0)):
+    def update(self, tilemap, movement=[0,0]):
         '''
         updates the movement
         (tilemap, movement=(0,0))
         '''
-
+        self.velocity = [0, 0]
+        if self.timer == 0:
+            self.timer = 300 
+            self.set_action('dash')
+            for i in range(25): # do 20 times
+                # for burst of particles
+                angle = random.random() * math.pi * 2
+                speed = random.random() * 0.5 + 0.5 # random from 0.5 to 1
+                pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
+                self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+            
+            self.velocity = [self.game.player.pos[0], self.game.player.pos[1]]
+            
+        # Reduce timer
+        if self.timer > 0:
+            self.timer -= 1
         self.count = (self.count + 1) % self.max
+
+        if abs(self.velocity[0]) < 0.1: # stops small sliding across screen after dash
+            self.velocity[0] = 0
+            self.set_action('idle')
+        if abs(self.velocity[1]) < 0.1:
+            self.velocity[1] = 0
+            self.set_action('idle')
+
+        if abs(self.game.player.dashing) >= 50:
+            if self.rect().colliderect(self.game.player.rect()): # if enemy hitbox collides with player
+                self.game.screenshake = max(16, self.game.screenshake)  # apply screenshake
+                self.game.sfx['hit'].play()
+                for i in range(30): # enemy death effect
+                    # on death sparks
+                    angle = random.random() * math.pi * 2 # random angle in a circle
+                    speed = random.random() * 5
+                    self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random())) 
+                    # on death particles
+                    self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random())) # left
+                self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random())) # right
+                
+                if self.hearts == 0:
+                    return True # [**]
+
         super().update(tilemap, movement=movement)
 
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)
         if self.count >= 25:
-            surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 16 - offset[1])) # renders the bow 
+            surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 16 - offset[1])) # renders the staff
         else:
-            surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 18 - offset[1])) # renders the bow 
+            surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 18 - offset[1])) # renders the staff
+        
+        # rendering the hearts, we want 6 heart levels, gold heart is a shield, red is actually hit
+        hp_1 = Heart(self.game.assets['heart'].copy(), [55, 19], 15)
+        hp_2 = Heart(self.game.assets['heart'].copy(), [72, 19], 15)
+        hp_3 = Heart(self.game.assets['heart'].copy(), [87, 19], 15)
+        hp_4 = Heart(self.game.assets['sheild'].copy(), [55, 19], 15)
+        hp_5 = Heart(self.game.assets['sheild'].copy(), [72, 19], 15)
+        hp_6 = Heart(self.game.assets['sheild'].copy(), [87, 19], 15)
+        if self.hearts > 0:
+            hp_1.update()
+            hp_1.render(self.game.display_black)
+        if self.hearts > -1:
+            hp_2.update()
+            hp_2.render(self.game.display_black)
+        if self.hearts > -2:
+            hp_3.update()
+            hp_3.render(self.game.display_black)
+        if self.hearts > -3:
+            hp_4.update()
+            hp_4.render(self.game.display_black)
+        if self.hearts > -4:
+            hp_5.update()
+            hp_5.render(self.game.display_black)
+        if self.hearts > -5:
+            hp_6.update()
+            hp_6.render(self.game.display_black)
+
 
 
         

@@ -45,11 +45,13 @@ class Game:
             'player': load_image('entities/player/player.png'),
             'background': load_image('background.png'),
             'heart': load_image('UI/health.png'),
+            'sheild': load_image('UI/sheild.png'),
             'skele/idle': Animation(load_images('entities/skele/idle'), img_dur=1),
             'skele/run': Animation(load_images('entities/skele/run'), img_dur=4),
             'spid/idle': Animation(load_images('entities/spider/idle'), img_dur=1),
             'spid/run': Animation(load_images('entities/spider/run'), img_dur=4),
             'boss/idle': Animation(load_images('entities/boss/idle'), img_dur=10),
+            'boss/dash': Animation(load_images('entities/boss/dash'), img_dur=1),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
@@ -236,8 +238,8 @@ class Game:
 
             # render the enemies
             for enemy in self.boss.copy():
-                kill =  enemy.update(self.tilemap, (0,0))
-                enemy.render(self.display_none, offset=render_scroll) # change outline here
+                kill =  enemy.update(self.tilemap, [0,0])
+                enemy.render(self.display_red, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.boss.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
