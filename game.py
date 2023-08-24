@@ -58,6 +58,7 @@ class Game:
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'bow': load_image('bow.png'),
+            'staff': load_image('staff.png'),
             'projectile': load_image('projectile.png'),
         }
 

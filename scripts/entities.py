@@ -340,9 +340,13 @@ class Boss(PhysicsEntity):
         (tilemap, movement=(0,0))
         '''
 
-        
+
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)
+        if self.flip:
+            surf.blit(pygame.transform.flip(self.game.assets['staff'], True, False), (self.rect().centerx + 1 - self.game.assets['bow'].get_width() + 2 - offset[0], self.rect().centery - 8 - offset[1])) # renders the bow 
+        else:
+            surf.blit(self.game.assets['staff'], (self.rect().centerx - 1 - offset[0], self.rect().centery - 8 - offset[1]))
         
 
         
