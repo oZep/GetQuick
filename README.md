@@ -46,4 +46,8 @@ ALL entity art and assets are done by me!
 - Fixed level loader
 - Updated the naming convensions for the different types of displays
 - Added new entity 'Boss'
+- Added boss idle animation
+- Added boss health bar rendering 
+- Added boss teleport, making it 'lag' behind the player so that they have the ability to dodge it
+
 

@@ -165,7 +165,7 @@ class Game:
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level + 1, self.max_level -1) # increase level
-                    self.load_level(4) # self.load_level(self.level) 
+                    self.load_level(self.level) # self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 

@@ -360,7 +360,8 @@ class Boss(PhysicsEntity):
             
             self.tele_timer = 15
             self.particle = 0
-            self.game.creenshake = max(16, self.game.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+            self.game.screenshake = max(16, self.game.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+            self.game.sfx['dash'].play()
             for i in range(40): # do 20 times
                 # for burst of particles
                 angle = random.random() * math.pi * 10
@@ -371,7 +372,7 @@ class Boss(PhysicsEntity):
             
         
         if self.tele_timer == 0: # teleports after 1 sec
-            self.game.creenshake = max(16, self.game.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+            self.game.screenshake = max(16, self.game.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
             self.pos = self.tele # set position as teleport location
             if self.particle == 0:
                 for i in range(40): # do 20 times
