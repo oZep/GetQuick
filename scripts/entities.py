@@ -355,7 +355,10 @@ class Boss(PhysicsEntity):
                 pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed]
                 self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
             
-            self.velocity = [self.game.player.pos[0], self.game.player.pos[1]]
+            if self.game.player.pos[0] > 160: # decided where boss should spawn
+                self.pos = [self.game.player.pos[0] - 15, self.game.player.pos[1]]
+            elif self.game.player.pos[0] < 160:
+                self.pos = [self.game.player.pos[0] + 14, self.game.player.pos[1]]
             
         # Reduce timer
         if self.timer > 0:
