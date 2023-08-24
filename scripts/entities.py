@@ -346,8 +346,7 @@ class Boss(PhysicsEntity):
         '''
         self.velocity = [0, 0]
         if self.timer == 0:
-            self.timer = 300 
-            self.set_action('dash')
+            self.timer = 500 
             for i in range(25): # do 20 times
                 # for burst of particles
                 angle = random.random() * math.pi * 2
@@ -365,14 +364,8 @@ class Boss(PhysicsEntity):
             self.timer -= 1
         self.count = (self.count + 1) % self.max
 
-        if abs(self.velocity[0]) < 0.1: # stops small sliding across screen after dash
-            self.velocity[0] = 0
-            self.set_action('idle')
-        if abs(self.velocity[1]) < 0.1:
-            self.velocity[1] = 0
-            self.set_action('idle')
 
-        if abs(self.game.player.dashing) >= 50:
+        if abs(self.game.player.dashing) >= 50 and self.timer > 350:
             if self.rect().colliderect(self.game.player.rect()): # if enemy hitbox collides with player
                 self.game.screenshake = max(16, self.game.screenshake)  # apply screenshake
                 self.game.sfx['hit'].play()
@@ -386,6 +379,7 @@ class Boss(PhysicsEntity):
                 self.game.sparks.append(Spark(self.rect().center, 0, 5 + random.random())) # left
                 self.game.sparks.append(Spark(self.rect().center, math.pi, 5 + random.random())) # right
                 
+                self.hearts += 1
                 if self.hearts == 0:
                     return True # [**]
 
@@ -399,30 +393,30 @@ class Boss(PhysicsEntity):
             surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 18 - offset[1])) # renders the staff
         
         # rendering the hearts, we want 6 heart levels, gold heart is a shield, red is actually hit
-        hp_1 = Heart(self.game.assets['heart'].copy(), [55, 19], 15)
-        hp_2 = Heart(self.game.assets['heart'].copy(), [72, 19], 15)
-        hp_3 = Heart(self.game.assets['heart'].copy(), [87, 19], 15)
-        hp_4 = Heart(self.game.assets['sheild'].copy(), [55, 19], 15)
-        hp_5 = Heart(self.game.assets['sheild'].copy(), [72, 19], 15)
-        hp_6 = Heart(self.game.assets['sheild'].copy(), [87, 19], 15)
-        if self.hearts > 0:
+        hp_1 = Heart(self.game.assets['heart'].copy(), [255, 19], 15)
+        hp_2 = Heart(self.game.assets['heart'].copy(), [270, 19], 15)
+        hp_3 = Heart(self.game.assets['heart'].copy(), [290, 19], 15)
+        hp_4 = Heart(self.game.assets['sheild'].copy(), [255, 19], 15)
+        hp_5 = Heart(self.game.assets['sheild'].copy(), [270, 19], 15)
+        hp_6 = Heart(self.game.assets['sheild'].copy(), [290, 19], 15)
+        if self.hearts < 0:
             hp_1.update()
-            hp_1.render(self.game.display_black)
-        if self.hearts > -1:
+            hp_1.render(self.game.display_red)
+        if self.hearts < -1:
             hp_2.update()
-            hp_2.render(self.game.display_black)
-        if self.hearts > -2:
+            hp_2.render(self.game.display_red)
+        if self.hearts < -2:
             hp_3.update()
-            hp_3.render(self.game.display_black)
-        if self.hearts > -3:
+            hp_3.render(self.game.display_red)
+        if self.hearts < -3:
             hp_4.update()
-            hp_4.render(self.game.display_black)
-        if self.hearts > -4:
+            hp_4.render(self.game.display_red)
+        if self.hearts < -4:
             hp_5.update()
-            hp_5.render(self.game.display_black)
-        if self.hearts > -5:
+            hp_5.render(self.game.display_red)
+        if self.hearts < -5:
             hp_6.update()
-            hp_6.render(self.game.display_black)
+            hp_6.render(self.game.display_red)
 
 
 
