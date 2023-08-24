@@ -49,7 +49,7 @@ class Game:
             'skele/run': Animation(load_images('entities/skele/run'), img_dur=4),
             'spid/idle': Animation(load_images('entities/spider/idle'), img_dur=1),
             'spid/run': Animation(load_images('entities/spider/run'), img_dur=4),
-            'boss/idle': Animation(load_images('entities/spider/idle'), img_dur=4),
+            'boss/idle': Animation(load_images('entities/boss/idle'), img_dur=10),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=1),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/runDOWN': Animation(load_images('entities/player/runDOWN'), img_dur=4),
@@ -158,11 +158,11 @@ class Game:
             self.screenshake = max(0, self.screenshake-1) # resets screenshake value
 
             # level transiition
-            if not len(self.skeletons) and not len(self.spiders): 
+            if not len(self.skeletons) and not len(self.spiders) and not len(self.boss): 
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level + 1, self.max_level -1) # increase level
-                    self.load_level(self.level) 
+                    self.load_level(4) # self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
@@ -172,7 +172,7 @@ class Game:
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
                 if self.dead > 40: # timer that starts when you die
                     self.level = 0
-                    self.load_level(0) # start at level 0 again. self.load_level(self.level)
+                    self.load_level(0) # start at level 0 again. self.load_level(0)
             
 
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
@@ -220,6 +220,26 @@ class Game:
                 enemy.render(self.display_none, offset=render_scroll) # change outline here
                 if kill: # if enemies update fn returns true [**]
                     self.spiders.remove(enemy) 
+                if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
+                    if self.player.rect().colliderect(enemy): # player collides with enemy
+                        self.dead += 1 # die
+                        self.sfx['hit'].play()
+                        self.cooldown = 150
+                        self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+                        for i in range(30): # when projectile hits player
+                            # on death sparks
+                            angle = random.random() * math.pi * 2 # random angle in a circle
+                            speed = random.random() * 5
+                            self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random())) 
+                            # on death particles
+                            self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+
+            # render the enemies
+            for enemy in self.boss.copy():
+                kill =  enemy.update(self.tilemap, (0,0))
+                enemy.render(self.display_none, offset=render_scroll) # change outline here
+                if kill: # if enemies update fn returns true [**]
+                    self.boss.remove(enemy) 
                 if abs(self.player.dashing) < 50 and not self.cooldown: # not dashing
                     if self.player.rect().colliderect(enemy): # player collides with enemy
                         self.dead += 1 # die

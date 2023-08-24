@@ -331,8 +331,10 @@ class Boss(PhysicsEntity):
         instantiates the spider
         (game, position: tuple, size)
         '''
-        super().__init__(game, 'Boss', pos, size)
+        super().__init__(game, 'boss', pos, size)
         self.speed = 4 # enemy speed
+        self.count = 0
+        self.max = 50
 
     def update(self, tilemap, movement=(0,0)):
         '''
@@ -340,13 +342,15 @@ class Boss(PhysicsEntity):
         (tilemap, movement=(0,0))
         '''
 
+        self.count = (self.count + 1) % self.max
+        super().update(tilemap, movement=movement)
 
     def render(self, surf, offset=(0, 0)):
         super().render(surf, offset=offset)
-        if self.flip:
-            surf.blit(pygame.transform.flip(self.game.assets['staff'], True, False), (self.rect().centerx + 1 - self.game.assets['bow'].get_width() + 2 - offset[0], self.rect().centery - 8 - offset[1])) # renders the bow 
+        if self.count >= 25:
+            surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 16 - offset[1])) # renders the bow 
         else:
-            surf.blit(self.game.assets['staff'], (self.rect().centerx - 1 - offset[0], self.rect().centery - 8 - offset[1]))
-        
+            surf.blit(self.game.assets['staff'], (self.rect().centerx - self.game.assets['bow'].get_width() + 24 - offset[0], self.rect().centery - 18 - offset[1])) # renders the bow 
+
 
         
