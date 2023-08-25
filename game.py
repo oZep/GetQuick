@@ -306,10 +306,10 @@ class Game:
             for projectile in self.magic.copy():
                 angle = self.angle_count * (math.pi/180)
                 if self.angle_count % 2 == 0:
-                    projectile[0][0] += projectile[1][0] * math.sin(angle) * 0.1
+                    projectile[0][0] += projectile[1][0] * 0.1
                     projectile[0][1] += projectile[1][1] * 0.1
                 else:
-                    projectile[0][0] += projectile[1][0] * math.sin(angle) * 0.1
+                    projectile[0][0] += projectile[1][0] * 0.1 # math.sin(angle)
                     projectile[0][1] += projectile[1][1] * 0.1
                 self.angle_count = (self.angle_count + 1) % 360
                 projectile[2] += 1
