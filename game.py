@@ -302,15 +302,15 @@ class Game:
                             self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
            
             # render/spawn magic projectiles
-            # [[x, y], direction, timer]
+            # [[x, y], direction [x, y]wwww, timer]
             for projectile in self.magic.copy():
                 angle = self.angle_count * (math.pi/180)
                 if self.angle_count % 2 == 0:
-                    projectile[0][0] += projectile[1] * math.sin(angle) 
-                    projectile[0][1] += projectile[1] * 0.5
+                    projectile[0][0] += projectile[1][0] * math.sin(angle) * 0.1
+                    projectile[0][1] += projectile[1][1] * 0.1
                 else:
-                    projectile[0][0] += projectile[1] * 0.5
-                    projectile[0][1] += projectile[1] * math.cos(angle)
+                    projectile[0][0] += projectile[1][0] * math.sin(angle) * 0.1
+                    projectile[0][1] += projectile[1][1] * 0.1
                 self.angle_count = (self.angle_count + 1) % 360
                 projectile[2] += 1
                 img = self.assets['magic']
@@ -320,7 +320,7 @@ class Game:
                 if self.tilemap.solid_check(projectile[0]): # if location is a solid tile
                     self.magic.remove(projectile)
                     for i in range(4):
-                        self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1] > 0 else 0), 2 + random.random())) # (math.pi if projectile[1] > 0 else 0), sparks bounce in oppositie direction if hit wall which depends on projectile direction
+                        self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1][1] > 0 else 0), 2 + random.random())) # (math.pi if projectile[1] > 0 else 0), sparks bounce in oppositie direction if hit wall which depends on projectile direction
                 elif projectile[2] > 150: #if timer > 6 seconds
                     self.magic.remove(projectile)
                 elif abs(self.player.dashing) < 50: # if not in dash
