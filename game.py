@@ -97,6 +97,7 @@ class Game:
         self.screenshake = 0
 
         self.cooldown = 0
+        self.angle_count = 0
 
 
     def load_level(self, map_id):
@@ -111,6 +112,7 @@ class Game:
         self.dead = -2  # gives player 3 lives, -2, -1, 0
 
         self.projectiles = []
+        self.magic = []
         self.sparks = []
 
         # transition for levels
@@ -165,7 +167,11 @@ class Game:
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level + 1, self.max_level -1) # increase level
-                    self.load_level(self.level) # self.load_level(self.level) 
+                    if self.level == 9:
+                        print("Game Over")
+                        return
+                    else:
+                        self.load_level(4) # self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
@@ -284,6 +290,42 @@ class Game:
                 elif abs(self.player.dashing) < 50: # if not in dash
                     if self.player.rect().collidepoint(projectile[0]):
                         self.projectiles.remove(projectile)
+                        self.dead += 1
+                        self.sfx['hit'].play()
+                        self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
+                        for i in range(30): # when projectile hits player
+                            # on death sparks
+                            angle = random.random() * math.pi * 2 # random angle in a circle
+                            speed = random.random() * 5
+                            self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random())) 
+                            # on death particles
+                            self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+           
+            # render/spawn magic projectiles
+            # [[x, y], direction, timer]
+            for projectile in self.magic.copy():
+                angle = self.angle_count * (math.pi/180)
+                if self.angle_count % 2 == 0:
+                    projectile[0][0] += projectile[1] * math.sin(angle) 
+                    projectile[0][1] += projectile[1] * 0.5
+                else:
+                    projectile[0][0] += projectile[1] * 0.5
+                    projectile[0][1] += projectile[1] * math.cos(angle)
+                self.angle_count = (self.angle_count + 1) % 360
+                projectile[2] += 1
+                img = self.assets['magic']
+                self.display_black.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
+                
+                # keep this but change it to the borders of the map, also might want some obsticles later
+                if self.tilemap.solid_check(projectile[0]): # if location is a solid tile
+                    self.magic.remove(projectile)
+                    for i in range(4):
+                        self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1] > 0 else 0), 2 + random.random())) # (math.pi if projectile[1] > 0 else 0), sparks bounce in oppositie direction if hit wall which depends on projectile direction
+                elif projectile[2] > 150: #if timer > 6 seconds
+                    self.magic.remove(projectile)
+                elif abs(self.player.dashing) < 50: # if not in dash
+                    if self.player.rect().collidepoint(projectile[0]):
+                        self.magic.remove(projectile)
                         self.dead += 1
                         self.sfx['hit'].play()
                         self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake

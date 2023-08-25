@@ -353,10 +353,14 @@ class Boss(PhysicsEntity):
         if self.timer == 0:
             self.timer = 500 
 
-            if self.game.player.pos[0] > 160: # decided where boss should spawn
-                self.tele = [self.game.player.pos[0] - 15, self.game.player.pos[1]]
-            elif self.game.player.pos[0] < 160:
-                self.tele = [self.game.player.pos[0] + 14, self.game.player.pos[1]]
+            if self.game.player.pos[0] > 160 and self.game.player.pos[0] > 120: # decided where boss should spawn
+                self.tele = [self.game.player.pos[0] - 15, self.game.player.pos[1] - 12]
+            elif self.game.player.pos[0] < 160 and self.game.player.pos[0] < 120:
+                self.tele = [self.game.player.pos[0] + 14, self.game.player.pos[1] - 12]
+            elif self.game.player.pos[0] < 160 and self.game.player.pos[0] > 120:
+                self.tele = [self.game.player.pos[0] + 14, self.game.player.pos[1] - 8]
+            else:
+                self.tele = [self.game.player.pos[0] - 15, self.game.player.pos[1] - 12]
             
             self.tele_timer = 15
             self.particle = 0
@@ -384,6 +388,13 @@ class Boss(PhysicsEntity):
                     self.game.sparks.append(Spark(self.rect().center, angle, 2 + random.random())) 
             self.particle = 1
             self.tele_timer = -1 # so it doesnt activate again
+
+        # let the bullets fall
+        if self.timer < 450 and self.timer > 50:
+            if self.timer % 2 == 0 and self.timer % 3 == 0 and self.timer % 5 == 0:
+                self.game.magic.append([[self.rect().centerx + 7, self.rect().centery], -3, 0])
+                self.game.magic.append([[self.rect().centerx + 7, self.rect().centery], 3, 0])
+
         
             
         # Reduce timers
