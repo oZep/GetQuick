@@ -145,11 +145,11 @@ class Game:
         '''
         runs the Game
         '''
-        #pygame.mixer.music.load('data/music.wav')
-        #pygame.mixer.music.set_volume(0.5)
-        #pygame.mixer.music.play(-1)
+        pygame.mixer.music.load('data/music.mp3')
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
 
-        # self.sfx['ambience'].play(-1)
+        self.sfx['ambience'].play(-1)
 
         # creating an infinite game loop
         while True:
@@ -171,7 +171,7 @@ class Game:
                         print("Game Over")
                         return
                     else:
-                        self.load_level(4) # self.load_level(self.level) 
+                        self.load_level(self.level) # self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
