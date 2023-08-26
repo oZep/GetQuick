@@ -391,7 +391,7 @@ class Boss(PhysicsEntity):
 
         # let the bullets fall
         if self.timer < 450 and self.timer > 50:
-            if self.timer % 2 == 0 and self.timer % 3 == 0:
+            if self.timer % 2 == 0 and self.timer % 3 == 0: # limit the timer
                 dir = [self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1]]
                 self.game.magic.append([[self.rect().centerx + 14, self.rect().centery], dir , 0])
 
