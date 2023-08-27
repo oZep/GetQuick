@@ -302,21 +302,29 @@ class Game:
                             self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
            
             # render/spawn magic projectiles
-            # [[x, y], direction [x, y], timer, tag]
+            # [[x, y], direction [x, y], timer, tag string: Uo, Down, Left, Right]
             for projectile in self.magic.copy():
-                angle = self.angle_count * (math.pi/180)
+                angle = self.angle_count * (math.pi / 180)
+                
+                # Calculate the change in x and y based on angle and distance
+                distance = 0.1 * self.angle_count  # Adjust the scaling factor as needed
+                delta_x = distance * math.cos(angle)
+                delta_y = distance * math.sin(angle)
+                
+                # Update position based on the direction
                 if projectile[3] == 'Up':
-                    projectile[0][0] += projectile[1][0] * 0.1
-                    projectile[0][1] += projectile[1][1] * 0.1
+                    projectile[0][0] += delta_x
+                    projectile[0][1] -= delta_y
                 elif projectile[3] == 'Down':
-                    projectile[0][0] += projectile[1][0] * 0.1 # math.sin(angle)
-                    projectile[0][1] += projectile[1][1] * 0.1
+                    projectile[0][0] += delta_x
+                    projectile[0][1] += delta_y
                 elif projectile[3] == 'Right':
-                    projectile[0][0] += projectile[1][0] * 0.1
-                    projectile[0][1] += projectile[1][1] * 0.1
+                    projectile[0][0] += delta_y  # Swap delta_x and delta_y for Right direction
+                    projectile[0][1] -= delta_x
                 else:
-                    projectile[0][0] += projectile[1][0] * 0.1
-                    projectile[0][1] += projectile[1][1] * 0.1
+                    projectile[0][0] -= delta_y  # Swap delta_x and delta_y for Left direction
+                    projectile[0][1] += delta_x
+                
                 self.angle_count = (self.angle_count + 1) % 360
                 projectile[2] += 1
                 img = self.assets['magic']
