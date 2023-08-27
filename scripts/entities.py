@@ -391,9 +391,21 @@ class Boss(PhysicsEntity):
 
         # let the bullets fall
         if self.timer < 450 and self.timer > 50:
-            if self.timer % 2 == 0 and self.timer % 3 == 0: # limit the timer
-                dir = [self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1]]
-                self.game.magic.append([[self.rect().centerx + 14, self.rect().centery], dir , 0])
+            if self.timer % 2 == 0 and self.timer % 3 == 0: # limit the projectiles
+                # spawn the four projectiles at the player's pos
+                # want to give the prok a horizontal direction and we'll apply a exponential increasing angle to the vector
+                # we only need to adjust the valua that's zero
+                # Top / Bottom
+                self.game.magic.append([[self.rect().centerx, self.rect().centery + 15], [0, -1], 0, 'Up'])
+                self.game.magic.append([[self.rect().centerx, self.rect().centery - 15], [0, 1], 0, 'Down'])
+                # Right / Left
+                self.game.magic.append([[self.rect().centerx + 14, self.rect().centery], [1, 0], 0, 'Right'])
+                self.game.magic.append([[self.rect().centerx - 11, self.rect().centery], [-1, 0], 0, 'Left'])       
+        
+
+
+                # dir = [self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1]] 
+                # self.game.magic.append([[self.rect().centerx + 14, self.rect().centery], dir , 0])
 
         
             

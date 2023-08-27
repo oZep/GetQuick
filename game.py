@@ -302,14 +302,20 @@ class Game:
                             self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
            
             # render/spawn magic projectiles
-            # [[x, y], direction [x, y]wwww, timer]
+            # [[x, y], direction [x, y], timer, tag]
             for projectile in self.magic.copy():
                 angle = self.angle_count * (math.pi/180)
-                if self.angle_count % 2 == 0:
+                if projectile[3] == 'Up':
+                    projectile[0][0] += projectile[1][0] * 0.1
+                    projectile[0][1] += projectile[1][1] * 0.1
+                elif projectile[3] == 'Down':
+                    projectile[0][0] += projectile[1][0] * 0.1 # math.sin(angle)
+                    projectile[0][1] += projectile[1][1] * 0.1
+                elif projectile[3] == 'Right':
                     projectile[0][0] += projectile[1][0] * 0.1
                     projectile[0][1] += projectile[1][1] * 0.1
                 else:
-                    projectile[0][0] += projectile[1][0] * 0.1 # math.sin(angle)
+                    projectile[0][0] += projectile[1][0] * 0.1
                     projectile[0][1] += projectile[1][1] * 0.1
                 self.angle_count = (self.angle_count + 1) % 360
                 projectile[2] += 1
