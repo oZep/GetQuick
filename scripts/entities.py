@@ -399,8 +399,8 @@ class Boss(PhysicsEntity):
                 self.game.magic.append([[self.rect().centerx, self.rect().centery + 15], [0, -1], 0, 'Up'])
                 self.game.magic.append([[self.rect().centerx, self.rect().centery - 15], [0, 1], 0, 'Down'])
                 # Right / Left
-                self.game.magic.append([[self.rect().centerx + 14, self.rect().centery], [1, 0], 0, 'Right'])
-                self.game.magic.append([[self.rect().centerx - 11, self.rect().centery], [-1, 0], 0, 'Left'])       
+                self.game.magic.append([[self.rect().centerx + 14, self.rect().centery], [1, 0], 0, 'Left'])
+                self.game.magic.append([[self.rect().centerx - 11, self.rect().centery], [-1, 0], 0, 'Right'])       
         
 
 

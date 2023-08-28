@@ -171,7 +171,7 @@ class Game:
                         print("Game Over")
                         return
                     else:
-                        self.load_level(self.level) # self.load_level(self.level) 
+                        self.load_level(4) # self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
@@ -301,41 +301,35 @@ class Game:
                             # on death particles
                             self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
            
+
             # render/spawn magic projectiles
             # [[x, y], direction [x, y], timer, tag string: Uo, Down, Left, Right]
+            max_radius = 40  # Adjust this value as needed
+            radius_growth_rate = 1  # Adjust this value to control how fast the radius grows
+            rotation_speed = 1  # Adjust this value to control the speed of rotation
+
             for projectile in self.magic.copy():
                 angle = self.angle_count * (math.pi / 180)
                 
-                # Calculate the change in x and y based on angle and distance
-                distance = 0.1 * self.angle_count  # Adjust the scaling factor as needed
-                delta_x = distance * math.cos(angle)
-                delta_y = distance * math.sin(angle)
+                # Calculate the radius of the circular path around the player character
+                radius = min(max_radius, max_radius * (1 - math.exp(-radius_growth_rate * self.angle_count)))
                 
-                # Update position based on the direction
-                if projectile[3] == 'Up':
-                    projectile[0][0] += delta_x
-                    projectile[0][1] -= delta_y
-                elif projectile[3] == 'Down':
-                    projectile[0][0] += delta_x
-                    projectile[0][1] += delta_y
-                elif projectile[3] == 'Right':
-                    projectile[0][0] += delta_y  # Swap delta_x and delta_y for Right direction
-                    projectile[0][1] -= delta_x
-                else:
-                    projectile[0][0] -= delta_y  # Swap delta_x and delta_y for Left direction
-                    projectile[0][1] += delta_x
+                # Calculate the new x and y positions for the projectile
+                new_x = self.boss[0].pos[0] + 15 + radius * math.cos(angle)
+                new_y = self.boss[0].pos[1] + 19 + radius * math.sin(angle)
                 
-                self.angle_count = (self.angle_count + 1) % 360
+                # Update the projectile's position
+                projectile[0][0] = new_x
+                projectile[0][1] = new_y
+                
+                # Update angle count for rotation
+                self.angle_count = (self.angle_count + rotation_speed) % 360
+                            
                 projectile[2] += 1
                 img = self.assets['magic']
                 self.display_black.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
                 
-                # keep this but change it to the borders of the map, also might want some obsticles later
-                if self.tilemap.solid_check(projectile[0]): # if location is a solid tile
-                    self.magic.remove(projectile)
-                    for i in range(4):
-                        self.sparks.append(Spark(projectile[0], random.random() - 0.5 + (math.pi if projectile[1][1] > 0 else 0), 2 + random.random())) # (math.pi if projectile[1] > 0 else 0), sparks bounce in oppositie direction if hit wall which depends on projectile direction
-                elif projectile[2] > 150: #if timer > 6 seconds
+                if projectile[2] > 150: #if timer > 6 seconds
                     self.magic.remove(projectile)
                 elif abs(self.player.dashing) < 50: # if not in dash
                     if self.player.rect().collidepoint(projectile[0]):
