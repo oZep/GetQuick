@@ -182,7 +182,7 @@ class Game:
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
                 if self.dead > 40: # timer that starts when you die
                     # self.level = 0
-                    self.load_level(10) # start at level 0 again. self.load_level(0)
+                    self.load_level(self.level) # start at level 0 again. self.load_level(0)
             
 
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
