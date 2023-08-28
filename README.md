@@ -52,4 +52,12 @@ ALL entity art and assets are done by me!
 - Added boss projectiles, adjusted projectile movement
 - Created 9 more levels, adjusted for difficulty
 
+## Entertaining Levels
+https://github.com/oZep/GetQuick/assets/97713154/58ee45e7-9c59-4c52-8f27-537be7779bcf
+
+
+## Boss Battle
+https://github.com/oZep/GetQuick/assets/97713154/f717fc79-0e18-41e7-ab3b-e9079a6bfabd
+
+
 
