@@ -168,11 +168,11 @@ class Game:
                 self.transition += 1 # start timer, increasing value past 0
                 if self.transition > 30: 
                     self.level = min(self.level + 1, self.max_level -1) # increase level
-                    if self.level == 9:
+                    if self.level == 10:
                         print("Game Over")
                         return
                     else:
-                        self.load_level(4) # self.load_level(self.level) 
+                        self.load_level(self.level) # self.load_level(self.level) 
             if self.transition < 0:
                 self.transition += 1 # goes up automatically until 0
 
@@ -181,8 +181,8 @@ class Game:
                 if self.dead >= 10: # to make the level transitions smoother
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
                 if self.dead > 40: # timer that starts when you die
-                    self.level = 0
-                    self.load_level(0) # start at level 0 again. self.load_level(0)
+                    # self.level = 0
+                    self.load_level(self.level) # start at level 0 again. self.load_level(0)
             
 
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
