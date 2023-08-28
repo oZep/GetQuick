@@ -201,7 +201,7 @@ class Skeleton(PhysicsEntity):
             # Using the distance formula
             dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
             distance = dis.length()            
-            if distance >= 45:
+            if distance >= 30:
                 angle = math.atan2(dis.y, dis.x)
                 movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed)
                 self.walking = True
@@ -283,7 +283,7 @@ class Spider(PhysicsEntity):
 
         # Using the distance formula
         dis = pygame.math.Vector2(self.game.player.pos[0] - self.pos[0], self.game.player.pos[1] - self.pos[1])
-        distance = dis.length()        
+        distance = dis.length()       
         if distance < 13: # back up after biting, size of player -2 to be more annoying
             angle = math.atan2(dis.y, dis.x)
             movement = (math.cos(angle) * self.speed, math.sin(angle) * self.speed) # + math.pi so it's the opposite direction

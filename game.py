@@ -20,7 +20,7 @@ class Game:
         pygame.init()
 
         # change the window caption
-        pygame.display.set_caption("9 Levels of Hell")
+        pygame.display.set_caption("10 Levels of Hell")
         # create window
         self.screen = pygame.display.set_mode((640, 480)) # (640, 480), (960, 720), (768, 576)
 
@@ -182,7 +182,7 @@ class Game:
                     self.transition = min(self.transition + 1, 30) # go as high as it can without changing level
                 if self.dead > 40: # timer that starts when you die
                     # self.level = 0
-                    self.load_level(self.level) # start at level 0 again. self.load_level(0)
+                    self.load_level(10) # start at level 0 again. self.load_level(0)
             
 
             # scroll = current scroll + (where we want the camera to be - what we have/can see currently) 
@@ -305,57 +305,91 @@ class Game:
 
             # render/spawn magic projectiles
             # [[x, y], direction [x, y], timer, tag string: Uo, Down, Left, Right]
-            max_radius = 56  # Adjust this value as needed
-            radius_growth_rate = 1.5  # Adjust this value to control how fast the radius grows
-            rotation_speed = 0.5  # Adjust this value to control the speed of rotation
+
+            max_radius = 130  # Adjust this value as needed
+            radius_growth_rate = 0.0005  # Adjust this value to control how fast the radius grows
+            rotation_speed = 0.0001  # Adjust this value to control the speed of rotation
+
+            max_existing_projectiles = 10  # Maximum number of existing projectiles
+            max_bullet_hell_projectiles = 10  # Maximum number of bullet hell pattern projectiles
 
             num_projectiles = len(self.magic) + 1
             angle_shift = 360 / num_projectiles  # Angle shift for each projectile
 
-            for index, projectile in enumerate(self.magic.copy()):
-                angle = (self.angle_count * angle_shift + index * angle_shift) * (math.pi / 180)
-                
-                # Calculate the radius of the circular path around the player character
-                radius = min(max_radius, max_radius * (1 - math.exp(-radius_growth_rate * self.angle_count)))
-                
-                # Calculate the new x and y positions for the projectile
-                new_x = self.boss[0].pos[0] + 15 + radius * math.cos(angle)
-                new_y = self.boss[0].pos[1] + 19 + radius * math.sin(angle)
-                
-                # Update the projectile's position
-                projectile[0][0] = new_x
-                projectile[0][1] = new_y
-                
-                # Update angle count for rotation
-                self.angle_count = (self.angle_count + rotation_speed) % 360
-                            
-                projectile[2] += 1
-                img = self.assets['magic']
-                self.display_black.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1])) # spawns it the center of the projectile
-                
-                if projectile[2] > 150: #if timer > 6 seconds
-                    self.magic.remove(projectile)
-                elif abs(self.player.dashing) < 50: # if not in dash
-                    if self.player.rect().collidepoint(projectile[0]):
+            if len(self.boss):
+                existing_projectiles_count = 0
+                bullet_hell_projectiles_count = 0
+
+                for index, projectile in enumerate(self.magic.copy()):
+                    angle = (self.angle_count * angle_shift + index * angle_shift) * (math.pi / 180)
+                    
+                    # Calculate the radius of the circular path around the player character
+                    radius = min(max_radius, max_radius * (1 - math.exp(-radius_growth_rate * self.angle_count)))
+                    
+                    # Calculate the new x and y positions for the projectile
+                    new_x = self.boss[0].pos[0] + 15 + radius * math.cos(angle)
+                    new_y = self.boss[0].pos[1] + 19 + radius * math.sin(angle)
+                    
+                    # Update the projectile's position
+                    projectile[0][0] = new_x
+                    projectile[0][1] = new_y
+                    
+                    # Update angle count for rotation
+                    self.angle_count = (self.angle_count + rotation_speed) % 360
+
+                    projectile[2] += 1
+                    img = self.assets['magic']
+                    self.display_black.blit(img, (projectile[0][0] - img.get_width() / 2 - render_scroll[0], projectile[0][1] - img.get_height() / 2 - render_scroll[1]))  # spawns it the center of the projectile
+                    
+                    if projectile[2] > 80:  # if timer > 3 seconds
                         self.magic.remove(projectile)
-                        self.dead += 1
-                        self.sfx['hit'].play()
-                        self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overrided by a smaller screenshake
-                        for i in range(30): # when projectile hits player
-                            # on death sparks
-                            angle = random.random() * math.pi * 2 # random angle in a circle
-                            speed = random.random() * 5
-                            self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random())) 
-                            # on death particles
-                            self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                    elif abs(self.player.dashing) < 50:  # if not in dash
+                        if self.player.rect().collidepoint(projectile[0]):
+                            self.magic.remove(projectile)
+                            self.dead += 1
+                            self.sfx['hit'].play()
+                            self.screenshake = max(16, self.screenshake)  # apply screenshake, larger wont be overridden by a smaller screenshake
+                            for i in range(30):  # when projectile hits player
+                                # on death sparks
+                                angle = random.random() * math.pi * 2  # random angle in a circle
+                                speed = random.random() * 5
+                                self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random()))
+                                # on death particles
+                                self.particles.append(
+                                    Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle * math.pi) * speed * 0.5], frame=random.randint(0, 7)))
+                                
+                            existing_projectiles_count += 1
+                            if existing_projectiles_count >= max_existing_projectiles:
+                                break
+                
+                if existing_projectiles_count < max_existing_projectiles:
+                    for index in range(num_projectiles):
+                        angle = (self.angle_count * angle_shift + index * angle_shift) * (math.pi / 180)
+                        
+                        # Calculate a random speed for the bullet
+                        bullet_speed = random.uniform(1.0, 3.0)  # Adjust the speed range as needed
+                        
+                        # Calculate the new x and y positions for the projectile
+                        new_x = self.boss[0].pos[0] + 15 + max_radius * math.cos(angle)
+                        new_y = self.boss[0].pos[1] + 19 + max_radius * math.sin(angle)
+                        
+                        # Calculate the direction vector
+                        direction_vector = [new_x - self.boss[0].pos[0] + 15, new_y - self.boss[0].pos[1] + 19]
+                        
+                        # Normalize the direction vector
+                        direction_magnitude = math.sqrt(direction_vector[0]**2 + direction_vector[1]**2)
+                        if direction_magnitude != 0:
+                            direction_vector[0] /= direction_magnitude
+                            direction_vector[1] /= direction_magnitude
+                        
+                        # Add the projectile to the list
+                        self.magic.append([[self.boss[0].pos[0] + 15, self.boss[0].pos[1] + 19], direction_vector, 0, 'None'])  # Replace 'None' with your desired direction tag
+                        
+                        self.angle_count = (self.angle_count + 1) % 360
 
-
-            # spark affect
-            for spark in self.sparks.copy():
-                kill = spark.update()
-                spark.render(self.display_black, (255,255,255), offset=render_scroll)
-                if kill:
-                    self.sparks.remove(spark)
+                        bullet_hell_projectiles_count += 1
+                        if bullet_hell_projectiles_count >= max_bullet_hell_projectiles:
+                            break
 
                                     
             hp_1 = Heart(self.assets['heart'].copy(), [13, 19], 15)
