@@ -2,9 +2,8 @@
 
 *Some basic gameplay...*
 
-https://github.com/oZep/GetQuick/assets/97713154/b09e8282-2519-46e2-809d-b9ae694599d5
+https://github.com/oZep/GetQuick/assets/97713154/86528bb3-902e-4fa5-88dc-248d2f645887
 
-**Still in development**
 
 ALL entity art and assets are done by me!
 
