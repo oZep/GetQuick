@@ -49,5 +49,7 @@ ALL entity art and assets are done by me!
 - Added boss idle animation
 - Added boss health bar rendering 
 - Added boss teleport, making it 'lag' behind the player so that they have the ability to dodge it
+- Added boss projectiles, adjusted projectile movement
+- Created 9 more levels, adjusted for difficulty
 
 
