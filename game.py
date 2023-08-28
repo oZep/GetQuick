@@ -98,6 +98,7 @@ class Game:
 
         self.cooldown = 0
         self.angle_count = 0
+        self.horizontal_count = 0
 
 
     def load_level(self, map_id):
@@ -304,12 +305,15 @@ class Game:
 
             # render/spawn magic projectiles
             # [[x, y], direction [x, y], timer, tag string: Uo, Down, Left, Right]
-            max_radius = 40  # Adjust this value as needed
-            radius_growth_rate = 1  # Adjust this value to control how fast the radius grows
-            rotation_speed = 1  # Adjust this value to control the speed of rotation
+            max_radius = 56  # Adjust this value as needed
+            radius_growth_rate = 1.5  # Adjust this value to control how fast the radius grows
+            rotation_speed = 0.5  # Adjust this value to control the speed of rotation
 
-            for projectile in self.magic.copy():
-                angle = self.angle_count * (math.pi / 180)
+            num_projectiles = len(self.magic) + 1
+            angle_shift = 360 / num_projectiles  # Angle shift for each projectile
+
+            for index, projectile in enumerate(self.magic.copy()):
+                angle = (self.angle_count * angle_shift + index * angle_shift) * (math.pi / 180)
                 
                 # Calculate the radius of the circular path around the player character
                 radius = min(max_radius, max_radius * (1 - math.exp(-radius_growth_rate * self.angle_count)))
