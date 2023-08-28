@@ -2,9 +2,8 @@
 
 *Some basic gameplay...*
 
-https://github.com/oZep/GetQuick/assets/97713154/b09e8282-2519-46e2-809d-b9ae694599d5
+https://github.com/oZep/GetQuick/assets/97713154/86528bb3-902e-4fa5-88dc-248d2f645887
 
-**Still in development**
 
 ALL entity art and assets are done by me!
 
@@ -51,5 +50,13 @@ ALL entity art and assets are done by me!
 - Added boss teleport, making it 'lag' behind the player so that they have the ability to dodge it
 - Added boss projectiles, adjusted projectile movement
 - Created 9 more levels, adjusted for difficulty
+
+## Entertaining Levels
+https://github.com/oZep/GetQuick/assets/97713154/58ee45e7-9c59-4c52-8f27-537be7779bcf
+
+
+## Boss Battle
+https://github.com/oZep/GetQuick/assets/97713154/f717fc79-0e18-41e7-ab3b-e9079a6bfabd
+
 
 
